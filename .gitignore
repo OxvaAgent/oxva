@@ -1,0 +1,19 @@
+# local Claude Code settings (machine-specific)
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# dependencies, if added later
+node_modules/
+.env
+.env.*
+!.env.example
+
+# owner key for the contract scripts (also covered by .env above) and local test deployments
+contracts/.env
+contracts/deployments/local.json

@@ -1,0 +1,4 @@
+{
+  "filter_paths": "contracts/test|node_modules",
+  "exclude_dependencies": true
+}

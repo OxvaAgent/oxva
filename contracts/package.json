@@ -1,0 +1,21 @@
+{
+  "name": "oxva-contracts",
+  "private": true,
+  "description": "Oxva Vault smart contract (Robinhood Chain testnet and mainnet beta), plus the owner's own deploy and manage scripts. Kept apart from the website so the Netlify build stays light.",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "export": "hardhat compile && node scripts/export.js",
+    "key:new": "node scripts/new-key.js",
+    "key:set": "node scripts/set-key.js",
+    "key:check": "node scripts/check-key.js",
+    "deploy:testnet": "hardhat compile --quiet && node scripts/deploy.js --net testnet",
+    "deploy:mainnet": "hardhat compile --quiet && node scripts/deploy.js --net mainnet",
+    "vault": "node scripts/vault.js"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "3.1.3",
+    "ethers": "6.17.0",
+    "hardhat": "2.29.1"
+  }
+}

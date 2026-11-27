@@ -1,0 +1,48 @@
+# Netlify deploy settings for Oxva
+[build]
+  # run every rule test, then regenerate public/ from src/ on every deploy
+  command = "npm test && node scripts/build.js"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# server functions: /api/calls, /api/chat and the four-hourly calls run (paths and schedule are set in each file)
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# the site moved to oxvaagent.com: the old Netlify address forwards every path there (deploy previews use other
+# hosts, deploy-preview-N--oxva-agent.netlify.app, so they are not affected)
+[[redirects]]
+  from = "https://oxva-agent.netlify.app/*"
+  to = "https://oxvaagent.com/:splat"
+  status = 301
+  force = true
+
+# the gate became Oxva Read; keep old shared links working (query strings carry over)
+[[redirects]]
+  from = "/gate"
+  to = "/read/"
+  status = 301
+
+[[redirects]]
+  from = "/gate/*"
+  to = "/read/:splat"
+  status = 301
+
+# Vendor bundles (ethers, WalletConnect) change rarely: let browsers keep them for an hour and refresh in the background.
+[[headers]]
+  for = "/assets/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    # Pages call Oxva's own /api, three public data APIs, the Robinhood Chain testnet and mainnet RPCs and WalletConnect's relay (vault page); nothing else is allowed.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.dexscreener.com https://api.gopluslabs.io https://api.honeypot.is https://rpc.testnet.chain.robinhood.com https://rpc.mainnet.chain.robinhood.com wss://relay.walletconnect.org wss://relay.walletconnect.com https://rpc.walletconnect.org https://verify.walletconnect.org https://verify.walletconnect.com https://pulse.walletconnect.org; frame-src https://app.netlify.com https://verify.walletconnect.org https://verify.walletconnect.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="How Oxva works: the calls and how they are graded, reading a token, the wall and the Oxva Vault on Robinhood Chain, wallets, the chat, $OXVA and where the data comes from.">
+<meta name="theme-color" content="#060807">
+<link rel="canonical" href="https://oxvaagent.com/docs/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oxva">
+<meta property="og:url" content="https://oxvaagent.com/docs/">
+<meta property="og:title" content="Oxva Docs: how Oxva works">
+<meta property="og:description" content="How Oxva works: the calls and how they are graded, reading a token, the wall and the Oxva Vault on Robinhood Chain, wallets, the chat, $OXVA and where the data comes from.">
+<meta property="og:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:secure_url" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Oxva: reads the market, guards every move. Robinhood Chain onchain agent.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oxva Docs: how Oxva works">
+<meta name="twitter:description" content="How Oxva works: the calls and how they are graded, reading a token, the wall and the Oxva Vault on Robinhood Chain, wallets, the chat, $OXVA and where the data comes from.">
+<meta name="twitter:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<title>Oxva Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Docs: a contents list on the left (sticky on desktop), the chapters on the right. */
+.docs{display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px;align-items:start;padding-bottom:90px}
+.toc{position:sticky;top:96px;display:grid;gap:2px;padding:16px;border:1px solid var(--gl);border-radius:18px;background:rgba(12,19,16,.86)}
+.toc span{font-size:10.5px;color:var(--em);margin-bottom:6px}
+.toc a{color:var(--ink-2);font-size:14.5px;padding:6px 8px;border-radius:8px}
+.toc a:hover,.toc a.on{color:var(--ink);background:rgba(63,214,160,.08)}
+.chap{padding:34px 0;border-top:1px solid var(--line)}
+.chap:first-child{border-top:0;padding-top:0}
+.chap h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,3.4vw,40px);line-height:1.1;scroll-margin-top:90px}
+.chap h3{font-family:var(--f-display);font-weight:500;font-size:20px;margin-top:22px}
+.chap p,.chap li{color:var(--ink-2);font-size:16px;line-height:1.65;max-width:72ch}
+.chap p{margin-top:12px}
+.chap ul,.chap ol{margin:12px 0 0;padding-left:20px;display:grid;gap:6px}
+.chap b{color:var(--ink);font-weight:600}
+.chap a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4)}
+.chap code{font-family:var(--f-mono);font-size:.92em;background:rgba(63,214,160,.07);border:1px solid var(--gl);border-radius:6px;padding:1px 6px;color:var(--ink);overflow-wrap:anywhere}
+.tbl{margin-top:16px;border:1px solid var(--gl);border-radius:14px;overflow:hidden}
+.tbl div{display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;padding:12px 16px;border-top:1px solid var(--line)}
+.tbl div:first-child{border-top:0}
+.tbl dt{color:var(--ink);font-weight:600}
+.tbl dd{margin:0;color:var(--ink-2)}
+.note{margin-top:16px;padding:14px 16px;border-left:2px solid var(--em);border-radius:0 10px 10px 0;background:rgba(63,214,160,.05);color:var(--ink-2)}
+.note.warn{border-left-color:var(--down);background:rgba(226,113,95,.07)}
+@media (max-width:900px){.docs{grid-template-columns:minmax(0,1fr);gap:24px}.toc{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.toc span{grid-column:1/-1}}
+@media (max-width:520px){.tbl div{grid-template-columns:minmax(0,1fr);gap:4px}}
+</style>
+</head>
+<body data-page="docs">
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="Oxva home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      OXVA
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="/#token" class="nav-token">$OXVA</a>
+      <a href="/calls/" data-nav="calls">Calls</a>
+      <a href="/markets/" data-nav="markets">Markets</a>
+      <a href="/chat/" data-nav="chat">Chat</a>
+      <a href="/wall/" data-nav="wall">The wall</a>
+      <a href="/vault/" data-nav="vault">Vault</a>
+      <a href="/read/" data-nav="read">Read a token</a>
+      <a href="/docs/" data-nav="docs">Docs</a>
+    </nav>
+    <button class="btn btn-line nav-wallet" type="button" id="nav-wallet" hidden>Connect wallet</button>
+    <a class="btn btn-ink nav-ask" href="/chat/">Ask Oxva <span class="arr">→</span></a>
+  </div>
+</header>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <span class="mono kicker">Oxva docs</span>
+      <h1 class="h1">How Oxva <em>works.</em></h1>
+      <p class="lede">Everything Oxva does, in plain words: the calls and how they are graded, reading a token, the wall and the vault, wallets, the chat, and where the data comes from.</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap docs">
+      <nav class="toc" aria-label="Contents">
+        <span class="mono">Contents</span>
+        <a href="#what">What Oxva is</a>
+        <a href="#calls">Calls</a>
+        <a href="#record">Track record</a>
+        <a href="#read">Read a token</a>
+        <a href="#wall">The wall</a>
+        <a href="#vault">Oxva Vault</a>
+        <a href="#wallets">Wallets</a>
+        <a href="#chat">Chat</a>
+        <a href="#token">$OXVA</a>
+        <a href="#data">Data and chains</a>
+      </nav>
+
+      <div>
+        <article class="chap" id="what">
+          <h2>What Oxva is</h2>
+          <p>Oxva is one agent with two jobs.</p>
+          <ul>
+            <li><b>It reads the market.</b> Every four hours it makes a call on each token it watches, and every call is graded in public afterwards.</li>
+            <li><b>It guards every move.</b> The wall checks each transaction a trading agent proposes against rules you set, before anything is signed. On Robinhood Chain those rules run on chain, in an Oxva Vault.</li>
+          </ul>
+          <p>Calls, markets, reads and the chat work without a wallet. You only need a wallet for the vault.</p>
+        </article>
+
+        <article class="chap" id="calls">
+          <h2>Calls</h2>
+          <p>Every four hours Oxva reads each token it watches and makes one call. A call always has the same five parts, said up front:</p>
+          <div class="tbl">
+            <div><dt>Action</dt><dd><b>BUY</b>, <b>SELL</b>, <b>WAIT</b> or <b>AVOID</b>. One answer, never a hedge. AVOID means the contract failed a check, whatever the market says.</dd></div>
+            <div><dt>Entry zone</dt><dd>Where the call makes sense, sized to the token's recent swings (between 0.6% and 5% around the price).</dd></div>
+            <div><dt>Invalidation</dt><dd>The price at which the call is wrong, set before the fact: two and a half zones away from the price, and never closer than 3%.</dd></div>
+            <div><dt>Conviction</dt><dd>One to five. Lower for thin pools, quiet markets or mixed signals.</dd></div>
+            <div><dt>Main risk</dt><dd>The one thing that would change its mind.</dd></div>
+          </div>
+          <h3>How a call is made</h3>
+          <p>Oxva reads price trend and order flow over 5 minutes, 1 hour, 6 hours and 24 hours, plus pool depth, and runs the contract checks described under <a href="#read">Read a token</a>. Fixed rules turn that into the call. No model sits in that step, and it never invents a number.</p>
+          <p>Robinhood stock tokens move like stocks, so for them a smaller move counts as strong (5% in 24 hours instead of 20%). Two more rules keep the record honest: after a very large 24-hour move (7.5% for a stock token, 30% for others) a buy or sell becomes a wait instead of chasing it, and while a buy or sell on a token is still being graded the same call is not repeated every four hours.</p>
+          <h3>Tokens watched</h3>
+          <p>On Robinhood Chain, Robinhood’s official stock tokens (NVDA, TSLA, AAPL, META, MSTR, CRCL) and native tokens (PONS, WALLET). Many look-alike stock tokens exist there; only the official “• Robinhood Token” contracts, checked on the explorer, are used. Elsewhere: PEPE, LINK, UNI, AAVE (Ethereum), AERO (Base) and CAKE (BNB Chain).</p>
+          <p class="note">A call is an automated reading of public data, not financial advice. It says what the numbers show, not what you should do with your money.</p>
+        </article>
+
+        <article class="chap" id="record">
+          <h2>Track record</h2>
+          <p>Every call is stored when it is made and graded against the price afterwards. Nothing is deleted: after two weeks a call leaves the live list for a monthly archive (<code>/api/calls?archive=YYYY-MM</code>, linked on <a href="/calls/#record">Calls</a>), and the record keeps counting it.</p>
+          <ul>
+            <li><b>Open</b>: a BUY or SELL younger than 30 minutes, not graded yet.</li>
+            <li><b>Working</b>: the price has moved the way the call said.</li>
+            <li><b>Against</b>: the price has moved the other way, but not past the invalidation.</li>
+            <li><b>Invalidated</b>: the price crossed the invalidation. This is final; it stays invalidated.</li>
+            <li><b>Watching</b>: WAIT and AVOID calls. They are shown but not counted in the score.</li>
+          </ul>
+          <p>A call is graded for three days, then closes with its last status. The <b>hit rate</b> is the share of graded BUY and SELL calls that are working. See it live on <a href="/calls/#record">Calls</a>.</p>
+        </article>
+
+        <article class="chap" id="read">
+          <h2>Read a token</h2>
+          <p>On <a href="/read/">Read a token</a>, paste any token address on Robinhood Chain, Ethereum, BNB Chain, Base, Arbitrum or Polygon. You get a market read and the contract checks, in one answer.</p>
+          <h3>The nine contract checks</h3>
+          <ul>
+            <li><b>Contract code</b>: is the source code public?</li>
+            <li><b>Test sell</b>: can the token actually be sold? (simulated where the chain allows it)</li>
+            <li><b>Buy tax</b> and <b>sell tax</b>: how much a trade loses to fees (two checks).</li>
+            <li><b>Owner powers</b>: can the owner mint, pause, blacklist or change fees?</li>
+            <li><b>Liquidity depth</b>: is there enough in the pool to trade?</li>
+            <li><b>Liquidity locked</b>: can the liquidity be pulled?</li>
+            <li><b>Holder spread</b>: is supply concentrated in a few wallets?</li>
+            <li><b>Market activity</b>: is anyone actually trading?</li>
+          </ul>
+          <p>A failing critical check (a token that cannot be sold, a high tax, or dangerous owner powers) makes the answer AVOID, whatever the market says.</p>
+          <h3>Sharing</h3>
+          <p>Every call card, every read and every open vault has a <b>Share</b> button. On a phone it opens your share menu (WhatsApp, Telegram, X…); on a computer it copies the link. The link opens the same token or vault, and shows an Oxva preview card in chat apps. Copying only the contract address shares plain text, with no card.</p>
+        </article>
+
+        <article class="chap" id="wall">
+          <h2>The wall</h2>
+          <p>A signature proves who sent a transaction; it says nothing about limits, recipients or approvals. The wall checks those first. Every transaction an agent proposes gets one of three answers:</p>
+          <ul>
+            <li><b>Allowed</b>: within the rules. Signed and sent, exactly the payload that was checked.</li>
+            <li><b>Needs approval</b>: above your threshold. Held until you confirm it.</li>
+            <li><b>Denied</b>: against the rules. Never signed, never sent, and the reason is logged.</li>
+          </ul>
+          <p>The rules: an hourly budget, a cap per transaction, an approval threshold, an allowlist of where money may go, maximum slippage, and replay protection. Try them in the <a href="/wall/">browser simulator</a>; they run for real in an Oxva Vault.</p>
+        </article>
+
+        <article class="chap" id="vault">
+          <h2>Oxva Vault</h2>
+          <p>A vault is a smart contract on Robinhood Chain that you own. Your AI agent can spend from it, but only inside your rules, and the rules are enforced on chain, not on Oxva’s server.</p>
+          <div class="tbl">
+            <div><dt>Hourly budget</dt><dd>How much ETH the agent may send per hour without asking.</dd></div>
+            <div><dt>Cap per call</dt><dd>The most a single call may send, even with your approval.</dd></div>
+            <div><dt>Approve above</dt><dd>Above this amount, a call waits for you to approve or reject it.</dd></div>
+            <div><dt>Allowlist</dt><dd>The only addresses the agent may send to or call. Everything else is refused.</dd></div>
+            <div><dt>Tokens</dt><dd>The agent can never move tokens (transfer, approve, permit, NFT transfers); only you can take tokens out.</dd></div>
+            <div><dt>Pause and withdraw</dt><dd>You can pause the agent and withdraw everything at any time.</dd></div>
+          </div>
+          <h3>Create one</h3>
+          <ol>
+            <li>Open <a href="/vault/">Vault</a> and connect a wallet.</li>
+            <li>Choose <b>Testnet</b> (free test ETH from the faucet) to try it first, or <b>Mainnet beta</b> for real ETH.</li>
+            <li>Set the agent address, the rules and the allowlist, then create it. Your wallet signs and pays the gas; you become the owner.</li>
+            <li>The page checks that the code at the address is exactly Oxva’s build and shows <b>Verified Oxva code</b>.</li>
+          </ol>
+          <p>Want to see one first? Open <a href="/vault/?net=mainnet&amp;v=0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14">Oxva’s own example vault</a> with its full history.</p>
+          <p class="note warn"><b>Mainnet is an unaudited beta.</b> The contract passes Oxva’s own tests, including hundreds of random actions checked against a model of its rules, but no outside firm has audited it. A bug could lose funds, there is no balance limit, and nobody can recover funds or undo a transaction. Only put in what you can afford to lose.</p>
+          <h3>Automated analysis (not an audit)</h3>
+          <p>On 27 November 2026 the contract was run through two automated analysers, Slither (Trail of Bits) and Solhint, and every finding was reviewed by hand. Result: no high or medium findings. There were six low ones (a withdrawal or agent address could be set to zero by the owner, and the hourly budget window uses the block time) and four informational ones (one small piece of assembly, three low-level calls that all check their result). None needs a change to the contract. Slither runs again automatically whenever the contract changes. This is not an audit, and the mainnet vault stays a beta.</p>
+        </article>
+
+        <article class="chap" id="wallets">
+          <h2>Wallets</h2>
+          <p>Use <b>Connect wallet</b> at the top of any page.</p>
+          <ul>
+            <li><b>Browser wallets</b>: every wallet installed in your browser is listed (MetaMask, Rabby, Coinbase Wallet, OKX, Trust, Rainbow, Phantom and others).</li>
+            <li><b>Scan with your phone</b>: shows a WalletConnect QR code; scan it with your wallet app.</li>
+            <li><b>On a phone</b>: open Oxva inside your wallet app’s browser with the links in the picker.</li>
+          </ul>
+          <p class="note warn">Oxva never sees your keys and will never ask for your seed phrase or private key. Anyone who does is a scammer.</p>
+        </article>
+
+        <article class="chap" id="chat">
+          <h2>Chat</h2>
+          <p>On <a href="/chat/">Chat</a>, ask about any token or about Oxva’s calls. A Claude model from Anthropic answers from Oxva’s live data, and says so when the data is not there. Your messages pass through Oxva’s server to Anthropic’s API to get an answer; Oxva does not store them.</p>
+          <p>To keep it running for everyone, there is a limit on messages per visitor per hour and per day for the whole site.</p>
+        </article>
+
+        <article class="chap" id="token">
+          <h2>$OXVA</h2>
+          
+          <p><b>There is no $OXVA token.</b> A token bound to this agent is an idea, not a product: nothing has launched, no contract exists, and no sale is planned. If it ever launches, it will be announced on the Oxva site first, with its contract address.</p>
+          <p class="note warn">Anyone offering $OXVA today is not Oxva. Do not send money to anyone selling it.</p>
+          
+        </article>
+
+        <article class="chap" id="data">
+          <h2>Data and chains</h2>
+          <div class="tbl">
+            <div><dt>Prices and pools</dt><dd>DexScreener.</dd></div>
+            <div><dt>Contract checks</dt><dd>GoPlus Security, and Honeypot.is for test sells on Ethereum, BNB Chain and Base (it does not cover Robinhood Chain).</dd></div>
+            <div><dt>Robinhood Chain</dt><dd>Mainnet chain 4663 and testnet chain 46630; explorer <a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">robinhoodchain.blockscout.com</a>.</dd></div>
+            <div><dt>Other chains</dt><dd>Ethereum, BNB Chain, Base, Arbitrum and Polygon for reads and calls.</dd></div>
+          </div>
+          <p>Calls and reads are automated views of public data. They can be wrong when the data is wrong or thin, and Oxva says so when a market is too thin to trade.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="/" aria-label="Oxva home">
+          <svg viewBox="503 308 538 406" aria-hidden="true"><path fill="currentColor" d="M506.5 597L608.1 395.9A160 160 0 0 1 750.9 308L931 308A110 110 0 0 1 1039.5 400L795.7 400A100 100 0 0 0 706.4 454.9L679.2 509ZM1040.8 425A110 110 0 0 1 1031.1 463.6L959.8 620.3A160 160 0 0 1 814.2 714L603 714A100 100 0 0 1 503.3 622.3L644.2 578.2L622.1 622L772 622A100 100 0 0 0 860 569.5L922.6 453.5Z"/></svg>
+          OXVA
+        </a>
+        <p>Reads the market, makes the call, and guards every move an agent makes with your money.</p>
+        <!-- Social links: when a link is ready, add href="https://…" target="_blank" rel="noopener" to its <a> and remove aria-disabled. -->
+        <div class="socials">
+          <a class="soc" aria-disabled="true" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
+          <a class="soc" aria-disabled="true" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span class="sr-only">X</span></a>
+          <a class="soc" aria-disabled="true" title="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.94 3.32a1 1 0 0 0-1.03-.15L2.58 10.4a1 1 0 0 0 .06 1.88l4.55 1.5 1.75 5.43a1 1 0 0 0 1.66.42l2.53-2.47 4.47 3.29a1 1 0 0 0 1.57-.6l3.1-15.3a1 1 0 0 0-.33-1.03ZM9.9 14.37l-.73 3.07-1.04-3.23 9.07-6.53Z"/></svg><span class="sr-only">Telegram</span></a>
+        </div>
+      </div>
+      <div><h5 class="mono">Use</h5><a href="/chat/">Chat with Oxva</a><a href="/calls/">Calls &amp; track record</a><a href="/markets/">Markets</a><a href="/read/">Read a token</a><a href="/docs/">Docs</a></div>
+      <div><h5 class="mono">The wall</h5><a href="/vault/">Create a vault</a><a href="/wall/">Try the wall</a><a href="/wall/#pipeline">How a transaction is checked</a><a href="/wall/#security">Security model</a><a href="/#token">$OXVA</a></div>
+    </div>
+    <div class="legal mono"><span>© 2026 Oxva</span><span>Calls and reads are automated views of public data, not financial advice.</span></div>
+  </div>
+</footer>
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>
+<script src="/assets/docs.js"></script>
+</body>
+</html>

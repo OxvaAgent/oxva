@@ -1,0 +1,11 @@
+{
+  "name": "oxva-walletconnect-bundle",
+  "private": true,
+  "description": "Builds src/assets/vendor/walletconnect.js (WalletConnect provider + QR encoder) for the vault page. Kept apart from the site so Netlify does not install it.",
+  "scripts": { "build": "node build.js" },
+  "devDependencies": {
+    "@walletconnect/ethereum-provider": "2.26.0",
+    "esbuild": "0.28.2",
+    "qrcode-generator": "2.0.4"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "oxva-three-bundle",
+  "private": true,
+  "description": "Builds src/assets/vendor/three-oxva.js (the parts of three.js the 3D Oxva mark on the home page uses). Kept apart from the site so Netlify does not install it.",
+  "scripts": { "build": "node build.js" },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "three": "0.187.0"
+  }
+}

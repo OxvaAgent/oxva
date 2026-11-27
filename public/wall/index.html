@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A policy engine for trading agents. Every transaction an agent proposes is checked against budget, caps, targets, slippage, replay and approvals before anything is signed. Try it in your browser.">
+<meta name="theme-color" content="#060807">
+<link rel="canonical" href="https://oxvaagent.com/wall/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oxva">
+<meta property="og:url" content="https://oxvaagent.com/wall/">
+<meta property="og:title" content="Oxva Wall: a valid transaction is not an authorized one">
+<meta property="og:description" content="A policy engine for trading agents. Every transaction an agent proposes is checked against budget, caps, targets, slippage, replay and approvals before anything is signed. Try it in your browser.">
+<meta property="og:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:secure_url" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Oxva: reads the market, guards every move. Robinhood Chain onchain agent.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oxva Wall: a valid transaction is not an authorized one">
+<meta name="twitter:description" content="A policy engine for trading agents. Every transaction an agent proposes is checked against budget, caps, targets, slippage, replay and approvals before anything is signed. Try it in your browser.">
+<meta name="twitter:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<title>Oxva Wall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Wall: a working simulator (policy, proposal, decision), then the pipeline, security model, components. */
+.sim{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,.95fr) minmax(0,1.2fr);gap:0;border:1px solid var(--line);border-radius:10px;background:var(--card);margin-top:34px;overflow:hidden}
+.col{padding:22px;min-width:0;border-right:1px solid var(--line)}
+.col:last-child{border-right:0;background:var(--paper)}
+.col h2{font-family:var(--f-display);font-size:26px;margin-bottom:4px}
+.col>.mono{color:var(--mute)}
+.f{display:grid;gap:5px;margin-top:14px}
+.f label{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.f input,.f select{border:1px solid var(--line-2);background:var(--paper);border-radius:8px;padding:9px 11px;font-size:14.5px;width:100%;min-width:0}
+.f input:focus,.f select:focus{outline:none;border-color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toggle{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:14.5px;color:var(--ink-2)}
+.toggle input{width:18px;height:18px;accent-color:var(--down)}
+.allow{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.allow div{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:3px 0}
+.allow code{font-family:var(--f-mono);font-size:11.5px;color:var(--mute)}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.preset{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:5px 11px;font-size:12.5px;color:var(--ink-2)}
+.preset:hover{border-color:var(--ink);color:var(--ink)}
+.propose{margin-top:18px;width:100%;border-radius:10px}
+.dec{font-family:var(--f-display);font-size:44px;line-height:1;margin-top:10px;color:var(--mute)}
+.dec.allow{color:var(--up)}.dec.approve{color:var(--flat)}.dec.deny{color:var(--down)}
+.decid{display:inline-block;margin-top:10px;font-family:var(--f-mono);font-size:12px;padding:5px 10px;border:1px solid var(--line-2);border-radius:6px;background:var(--card);overflow-wrap:anywhere}
+.dnote{color:var(--ink-2);font-size:14.5px;margin-top:12px}
+.checks{list-style:none;margin:16px 0 0;padding:0;border-top:1px solid var(--line)}
+.checks li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:2px 10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.checks .ic{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;border:1px solid var(--line-2);color:var(--mute);margin-top:1px}
+.checks li.pass .ic{background:var(--up);border-color:var(--up);color:var(--paper)}
+.checks li.hold .ic{background:var(--flat);border-color:var(--flat);color:var(--paper)}
+.checks li.fail .ic{background:var(--down);border-color:var(--down);color:var(--paper)}
+.checks b{font-weight:600}
+.checks span.d{grid-column:2;color:var(--ink-2)}
+.approve-btn{margin-top:14px}
+.meter{margin-top:20px}
+.meter .mono{display:flex;justify-content:space-between;color:var(--mute)}
+.meter .track{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:6px}
+.meter .track b{display:block;height:100%;background:var(--up);transition:width .4s}
+.meter .track b.full{background:var(--flat)}
+.audit{margin-top:20px}
+.audit h3{color:var(--mute)}
+.audit ol{list-style:none;margin:8px 0 0;padding:0;max-height:220px;overflow-y:auto;font-family:var(--f-mono);font-size:11.5px}
+.audit li{display:grid;grid-template-columns:58px 70px minmax(0,1fr);gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.audit .allow{color:var(--up)}.audit .approve{color:var(--flat)}.audit .deny{color:var(--down)}
+.audit .empty{color:var(--mute);display:block}
+.reset{border:0;background:none;padding:0;margin-top:12px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width:1060px){.sim{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.col:last-child{grid-column:1/-1;border-top:1px solid var(--line)}.col:nth-child(2){border-right:0}}
+@media (max-width:680px){.sim{grid-template-columns:minmax(0,1fr)}.col{border-right:0;border-bottom:1px solid var(--line)}.col:last-child{border-top:0}}
+
+.pipe{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--ink)}
+.pipe div{padding:20px 18px 14px 0;border-bottom:1px solid var(--line);min-width:0}
+.pipe div:not(:nth-child(4n+1)){padding-left:18px;border-left:1px solid var(--line)}
+.pipe .n{font-family:var(--f-mono);font-size:11.5px;color:var(--mute)}
+.pipe h4{font-family:var(--f-display);font-size:24px;margin-top:8px}
+.pipe p{color:var(--ink-2);font-size:14.5px;margin-top:4px}
+@media (max-width:820px){.pipe{grid-template-columns:repeat(2,minmax(0,1fr))}.pipe div:not(:nth-child(4n+1)){padding-left:0;border-left:0}.pipe div:nth-child(even){padding-left:18px;border-left:1px solid var(--line)}}
+.model{border-top:1px solid var(--ink)}
+.model div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px;padding:16px 0;border-bottom:1px solid var(--line);align-items:start}
+.model h4{font-family:var(--f-display);font-size:22px}
+.model p{grid-column:1;color:var(--ink-2);font-size:15px}
+.model .tag{grid-row:1/span 2;grid-column:2}
+.ints{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+</style>
+</head>
+<body data-page="wall">
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="Oxva home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      OXVA
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="/#token" class="nav-token">$OXVA</a>
+      <a href="/calls/" data-nav="calls">Calls</a>
+      <a href="/markets/" data-nav="markets">Markets</a>
+      <a href="/chat/" data-nav="chat">Chat</a>
+      <a href="/wall/" data-nav="wall">The wall</a>
+      <a href="/vault/" data-nav="vault">Vault</a>
+      <a href="/read/" data-nav="read">Read a token</a>
+      <a href="/docs/" data-nav="docs">Docs</a>
+    </nav>
+    <button class="btn btn-line nav-wallet" type="button" id="nav-wallet" hidden>Connect wallet</button>
+    <a class="btn btn-ink nav-ask" href="/chat/">Ask Oxva <span class="arr">→</span></a>
+  </div>
+</header>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <span class="mono kicker">Oxva wall · policy engine · simulator + Robinhood Chain</span>
+      <h1 class="h1">A valid transaction is not an <em>authorized</em> one.</h1>
+      <p class="lede">Agents decide. The wall authorizes every transaction they propose, before anything is signed. Set a policy, send proposals, and watch what gets through. This simulator runs in your browser; the same rules run for real in an <a href="/vault/" style="border-bottom:1px solid var(--ink-2)">Oxva Vault on Robinhood Chain</a> (testnet, or mainnet as an unaudited beta).</p>
+
+      <div class="sim">
+        <div class="col">
+          <h2>Policy</h2>
+          <span class="mono">What this agent may do</span>
+          <div class="two">
+            <div class="f"><label for="p-budget">Hourly budget ($)</label><input id="p-budget" type="number" min="0" step="10" value="500"></div>
+            <div class="f"><label for="p-cap">Per-trade cap ($)</label><input id="p-cap" type="number" min="0" step="10" value="250"></div>
+          </div>
+          <div class="two">
+            <div class="f"><label for="p-approve">Approval above ($)</label><input id="p-approve" type="number" min="0" step="10" value="100"></div>
+            <div class="f"><label for="p-slip">Max slippage (%)</label><input id="p-slip" type="number" min="0" step="0.1" value="1"></div>
+          </div>
+          <label class="toggle"><input id="p-paused" type="checkbox"> Pause this account</label>
+          <div class="allow"><span class="mono muted">Allowlist</span><div><span>DEX router</span><code>0x2222…a91c</code></div><div><span>Data vendor</span><code>0x8c1d…77e0</code></div><div><span>Methods</span><code>swap · transfer</code></div></div>
+        </div>
+
+        <div class="col">
+          <h2>Proposal</h2>
+          <span class="mono">What the agent wants to sign</span>
+          <div class="presets" id="presets">
+            <button class="preset" type="button" data-p="swap">Swap $40</button>
+            <button class="preset" type="button" data-p="vendor">Pay vendor $180</button>
+            <button class="preset" type="button" data-p="unknown">Unknown contract</button>
+            <button class="preset" type="button" data-p="unlimited">Unlimited approval</button>
+            <button class="preset" type="button" data-p="replay">Replay last</button>
+            <button class="preset" type="button" data-p="scam">Token says stay out</button>
+          </div>
+          <div class="two">
+            <div class="f"><label for="q-method">Method</label><select id="q-method"><option value="swap">swap()</option><option value="transfer">transfer()</option><option value="approve">approve()</option></select></div>
+            <div class="f"><label for="q-amount">Amount ($)</label><input id="q-amount" type="number" min="0" step="1" value="40"></div>
+          </div>
+          <div class="f"><label for="q-to">Target</label><select id="q-to"><option value="0x2222222222222222222222222222222222a91c">DEX router · 0x2222…a91c</option><option value="0x8c1d00000000000000000000000000000077e0">Data vendor · 0x8c1d…77e0</option><option value="0x9f0300000000000000000000000000000000e21b">Unknown contract · 0x9f03…e21b</option></select></div>
+          <div class="two">
+            <div class="f"><label for="q-slip">Slippage (%)</label><input id="q-slip" type="number" min="0" step="0.1" value="0.3"></div>
+            <div class="f"><label for="q-token">Token read</label><select id="q-token"><option value="allow">Passes</option><option value="hold">Needs a look</option><option value="deny">Stay out</option><option value="">No token</option></select></div>
+          </div>
+          <div class="two">
+            <div class="f"><label for="q-nonce">Nonce</label><input id="q-nonce" type="number" min="1" step="1" value="1"></div>
+            <label class="toggle" style="margin-top:30px"><input id="q-unlimited" type="checkbox"> Unlimited</label>
+          </div>
+          <button class="btn btn-ink propose" id="propose" type="button">Propose to the wall →</button>
+        </div>
+
+        <div class="col" aria-live="polite">
+          <h2>Decision</h2>
+          <span class="mono" id="d-when">Waiting for a proposal</span>
+          <div class="dec" id="d-dec">—</div>
+          <span class="decid" id="d-id" hidden></span>
+          <p class="dnote" id="d-note">Pick a preset or fill in a proposal, then send it to the wall.</p>
+          <button class="btn btn-line approve-btn" id="d-approve" type="button" hidden>Approve as a person</button>
+          <ul class="checks" id="d-checks"></ul>
+          <div class="meter"><div class="mono"><span>Spent this hour</span><span id="m-text">$0 of $500</span></div><div class="track"><b id="m-bar" style="width:0%"></b></div></div>
+          <div class="audit"><h3 class="mono">Audit log · append-only</h3><ol id="log"><li class="empty">Nothing yet.</li></ol></div>
+          <button class="reset" id="reset" type="button">Reset the demo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="pipeline">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="mono">From intention to authorized execution</span>
+        <h2 class="h2">One engine, <em>three exits.</em></h2>
+        <p>Allow, needs approval, or deny. Only an allowed transaction is ever signed.</p>
+      </div>
+      <div class="pipe">
+        <div><span class="n">01</span><h4>Propose</h4><p>The agent sends the exact transaction.</p></div>
+        <div><span class="n">02</span><h4>Evaluate</h4><p>Policy, budget, replay, slippage, the token's read.</p></div>
+        <div><span class="n">03</span><h4>Decide</h4><p>Fixed rules give one answer, or deny.</p></div>
+        <div><span class="n">04</span><h4>Approve</h4><p>Above your threshold, a person confirms.</p></div>
+        <div><span class="n">05</span><h4>Co-sign</h4><p>Only that payload, for five minutes.</p></div>
+        <div><span class="n">06</span><h4>Enforce</h4><p>The account checks the co-signature.</p></div>
+        <div><span class="n">07</span><h4>Execute</h4><p>Only authorized transactions land.</p></div>
+        <div><span class="n">08</span><h4>Record</h4><p>Every decision, in an append-only log.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="security">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="mono">Security model</span>
+        <h2 class="h2">Intelligence is not the authority. <em>Enforcement is.</em></h2>
+        <p>No model sits on the decision path. What runs in this demo is marked; what needs real accounts is marked planned.</p>
+      </div>
+      <div class="model">
+        <div><h4>Deterministic evaluation</h4><p>The same policy and proposal always give the same decision.</p><span class="tag live">In the demo</span></div>
+        <div><h4>Spending limits</h4><p>An hourly budget and a per-trade cap, reserved the moment a transaction is allowed.</p><span class="tag live">In the demo</span></div>
+        <div><h4>Replay protection</h4><p>A nonce can be authorized once. Sending the same proposal again is denied.</p><span class="tag live">In the demo</span></div>
+        <div><h4>Approvals bound to the payload</h4><p>An authorization covers one exact payload and expires in five minutes.</p><span class="tag live">In the demo</span></div>
+        <div><h4>Append-only audit</h4><p>Every decision is logged with its reason. Nothing is edited after the fact.</p><span class="tag live">In the demo</span></div>
+        <div><h4>Funds behind the contract</h4><p>In an Oxva Vault the money sits in a contract the owner controls. The agent can only ask; the contract decides, and the owner can pause or withdraw at any time.</p><span class="tag live">Testnet + mainnet beta</span></div>
+      </div>
+      <div class="ints"><span class="tag plan">TypeScript SDK</span><span class="tag plan">Python SDK</span><span class="tag plan">MCP server</span><span class="tag plan">REST API</span><span class="tag plan">Webhooks</span><span class="tag live">Ask why in chat</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="/" aria-label="Oxva home">
+          <svg viewBox="503 308 538 406" aria-hidden="true"><path fill="currentColor" d="M506.5 597L608.1 395.9A160 160 0 0 1 750.9 308L931 308A110 110 0 0 1 1039.5 400L795.7 400A100 100 0 0 0 706.4 454.9L679.2 509ZM1040.8 425A110 110 0 0 1 1031.1 463.6L959.8 620.3A160 160 0 0 1 814.2 714L603 714A100 100 0 0 1 503.3 622.3L644.2 578.2L622.1 622L772 622A100 100 0 0 0 860 569.5L922.6 453.5Z"/></svg>
+          OXVA
+        </a>
+        <p>Reads the market, makes the call, and guards every move an agent makes with your money.</p>
+        <!-- Social links: when a link is ready, add href="https://…" target="_blank" rel="noopener" to its <a> and remove aria-disabled. -->
+        <div class="socials">
+          <a class="soc" aria-disabled="true" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
+          <a class="soc" aria-disabled="true" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span class="sr-only">X</span></a>
+          <a class="soc" aria-disabled="true" title="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.94 3.32a1 1 0 0 0-1.03-.15L2.58 10.4a1 1 0 0 0 .06 1.88l4.55 1.5 1.75 5.43a1 1 0 0 0 1.66.42l2.53-2.47 4.47 3.29a1 1 0 0 0 1.57-.6l3.1-15.3a1 1 0 0 0-.33-1.03ZM9.9 14.37l-.73 3.07-1.04-3.23 9.07-6.53Z"/></svg><span class="sr-only">Telegram</span></a>
+        </div>
+      </div>
+      <div><h5 class="mono">Use</h5><a href="/chat/">Chat with Oxva</a><a href="/calls/">Calls &amp; track record</a><a href="/markets/">Markets</a><a href="/read/">Read a token</a><a href="/docs/">Docs</a></div>
+      <div><h5 class="mono">The wall</h5><a href="/vault/">Create a vault</a><a href="/wall/">Try the wall</a><a href="/wall/#pipeline">How a transaction is checked</a><a href="/wall/#security">Security model</a><a href="/#token">$OXVA</a></div>
+    </div>
+    <div class="legal mono"><span>© 2026 Oxva</span><span>Calls and reads are automated views of public data, not financial advice.</span></div>
+  </div>
+</footer>
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>
+<script src="/assets/wall-core.js"></script>
+<script src="/assets/wall.js"></script>
+</body>
+</html>

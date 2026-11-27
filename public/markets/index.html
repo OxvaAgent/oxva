@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Live price, liquidity and volume for every token Oxva watches, next to its latest call.">
+<meta name="theme-color" content="#060807">
+<link rel="canonical" href="https://oxvaagent.com/markets/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oxva">
+<meta property="og:url" content="https://oxvaagent.com/markets/">
+<meta property="og:title" content="Oxva Markets: the chain at a glance">
+<meta property="og:description" content="Live price, liquidity and volume for every token Oxva watches, next to its latest call.">
+<meta property="og:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:secure_url" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Oxva: reads the market, guards every move. Robinhood Chain onchain agent.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oxva Markets: the chain at a glance">
+<meta name="twitter:description" content="Live price, liquidity and volume for every token Oxva watches, next to its latest call.">
+<meta name="twitter:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<title>Oxva Markets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Markets: one table, live numbers on the left, Oxva's latest call on the right. */
+.mt{min-width:880px;margin-top:30px}
+/* the token cell stays a table cell (display:flex on a td breaks its height and border line) */
+.mt td.tok{white-space:nowrap}
+.mt td.tok .sym{margin-right:10px}
+.mt .sym{font-family:var(--f-display);font-size:24px;line-height:1}
+.mt .chg.pos{color:var(--up)}.mt .chg.neg{color:var(--down)}
+.share{display:flex;align-items:center;gap:8px}
+.share .tr{width:70px;height:5px;border-radius:3px;background:rgba(163,56,42,.55);overflow:hidden}
+.share .tr b{display:block;height:100%;background:var(--up)}
+.callcell{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mt a.go{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--ink-2)}
+.mt tr.row:hover td{background:var(--card)}
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-top:14px;color:var(--mute)}
+.bar button{border:0;background:none;padding:0;color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase}
+
+/* what the call column means, under the table */
+.key{margin-top:40px;border-top:1px solid var(--line);padding-top:22px}
+.key dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 36px;margin:14px 0 0}
+.key dl>div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:start}
+.key dt{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-top:2px}
+.key dd{margin:0;color:var(--ink-2);font-size:15px;line-height:1.5}
+.key dd b{font-weight:500}
+.key .more{display:inline-block;margin-top:18px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--ink-2)}
+@media (max-width:900px){.key dl{grid-template-columns:minmax(0,1fr)}}
+
+/* phones and small tablets (the table needs 880px): each token is a small card instead of a wide table you
+   have to scroll sideways, so the call is in view without swiping. The cells keep their order; the grid places them. */
+@media (max-width:920px){
+  .tscroll{overflow:visible}
+  .mt{min-width:0;display:block;margin-top:22px}
+  .mt thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .mt tbody{display:block}
+  .mt tr.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"tok tok price" "tok tok chg" "liq vol share" "call call go";gap:2px 12px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .mt tr.row td{display:block;padding:0;border:0;min-width:0}
+  .mt tr.row:hover td{background:none}
+  .mt td.tok{grid-area:tok;align-self:center;white-space:normal}
+  .mt td.tok .sym{display:block;margin:0 0 4px}
+  .mt td.col-price{grid-area:price;font-size:15.5px}
+  .mt td.col-chg{grid-area:chg}
+  .mt td.col-liq{grid-area:liq;text-align:left}
+  .mt td.col-vol{grid-area:vol;text-align:left}
+  .mt td.col-share{grid-area:share}
+  .mt td[data-l]{margin-top:12px}
+  .mt td[data-l]::before{content:attr(data-l);display:block;margin-bottom:3px;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+  .mt td.col-share .share .tr{width:44px}
+  .mt td.col-call{grid-area:call;margin-top:14px;align-self:center}
+  .mt td.col-go{grid-area:go;margin-top:14px;align-self:center;text-align:right}
+  .key dl>div{grid-template-columns:minmax(0,1fr);gap:6px}
+}
+</style>
+</head>
+<body data-page="markets">
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="Oxva home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      OXVA
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="/#token" class="nav-token">$OXVA</a>
+      <a href="/calls/" data-nav="calls">Calls</a>
+      <a href="/markets/" data-nav="markets">Markets</a>
+      <a href="/chat/" data-nav="chat">Chat</a>
+      <a href="/wall/" data-nav="wall">The wall</a>
+      <a href="/vault/" data-nav="vault">Vault</a>
+      <a href="/read/" data-nav="read">Read a token</a>
+      <a href="/docs/" data-nav="docs">Docs</a>
+    </nav>
+    <button class="btn btn-line nav-wallet" type="button" id="nav-wallet" hidden>Connect wallet</button>
+    <a class="btn btn-ink nav-ask" href="/chat/">Ask Oxva <span class="arr">→</span></a>
+  </div>
+</header>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <span class="mono kicker">Oxva markets · live</span>
+      <h1 class="h1">The chain <em>at a glance.</em></h1>
+      <p class="lede">Every token Oxva watches: live price, liquidity and volume from the deepest pools, the share of trades that were buys in the last day, and Oxva's latest call.</p>
+      <div class="tscroll">
+        <table class="t mt">
+          <thead><tr><th>Token</th><th class="r">Price</th><th class="r">24h</th><th class="r">Liquidity</th><th class="r">24h volume</th><th>Buys, 24h</th><th>Latest call</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="bar mono"><span id="m-time">Reading markets…</span><button type="button" id="refresh">Refresh</button></div>
+      <div class="key">
+        <span class="mono kicker">Reading the call column</span>
+        <dl>
+          <div><dt><span class="pill a-BUY"><i></i>BUY</span><span class="pill a-SELL"><i></i>SELL</span></dt><dd>Oxva leans up or down for the next few hours.</dd></div>
+          <div><dt><span class="pill a-WAIT"><i></i>WAIT</span></dt><dd>No clear edge, or the price already moved a lot in a day. Not an error: Oxva only watches.</dd></div>
+          <div><dt><span class="pill a-AVOID"><i></i>AVOID</span></dt><dd>The contract failed a safety check, whatever the market says.</dd></div>
+          <div><dt><span class="dots" aria-hidden="true"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span></span></dt><dd>Conviction, from 1 to 5.</dd></div>
+          <div><dt class="mono muted">Status</dt><dd><b class="s-working">Working</b>: price moved with the call. <b class="s-against">Against</b>: it moved the other way, not yet to the stop. <b class="s-invalidated">Invalidated</b>: it hit the stop. <b>Open</b>: too new to grade.</dd></div>
+          <div><dt class="mono muted">Watching</dt><dd>WAIT and AVOID calls. Shown, but not counted in the hit rate.</dd></div>
+        </dl>
+        <a class="more" href="/docs/#calls">How calls are made →</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="/" aria-label="Oxva home">
+          <svg viewBox="503 308 538 406" aria-hidden="true"><path fill="currentColor" d="M506.5 597L608.1 395.9A160 160 0 0 1 750.9 308L931 308A110 110 0 0 1 1039.5 400L795.7 400A100 100 0 0 0 706.4 454.9L679.2 509ZM1040.8 425A110 110 0 0 1 1031.1 463.6L959.8 620.3A160 160 0 0 1 814.2 714L603 714A100 100 0 0 1 503.3 622.3L644.2 578.2L622.1 622L772 622A100 100 0 0 0 860 569.5L922.6 453.5Z"/></svg>
+          OXVA
+        </a>
+        <p>Reads the market, makes the call, and guards every move an agent makes with your money.</p>
+        <!-- Social links: when a link is ready, add href="https://…" target="_blank" rel="noopener" to its <a> and remove aria-disabled. -->
+        <div class="socials">
+          <a class="soc" aria-disabled="true" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
+          <a class="soc" aria-disabled="true" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span class="sr-only">X</span></a>
+          <a class="soc" aria-disabled="true" title="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.94 3.32a1 1 0 0 0-1.03-.15L2.58 10.4a1 1 0 0 0 .06 1.88l4.55 1.5 1.75 5.43a1 1 0 0 0 1.66.42l2.53-2.47 4.47 3.29a1 1 0 0 0 1.57-.6l3.1-15.3a1 1 0 0 0-.33-1.03ZM9.9 14.37l-.73 3.07-1.04-3.23 9.07-6.53Z"/></svg><span class="sr-only">Telegram</span></a>
+        </div>
+      </div>
+      <div><h5 class="mono">Use</h5><a href="/chat/">Chat with Oxva</a><a href="/calls/">Calls &amp; track record</a><a href="/markets/">Markets</a><a href="/read/">Read a token</a><a href="/docs/">Docs</a></div>
+      <div><h5 class="mono">The wall</h5><a href="/vault/">Create a vault</a><a href="/wall/">Try the wall</a><a href="/wall/#pipeline">How a transaction is checked</a><a href="/wall/#security">Security model</a><a href="/#token">$OXVA</a></div>
+    </div>
+    <div class="legal mono"><span>© 2026 Oxva</span><span>Calls and reads are automated views of public data, not financial advice.</span></div>
+  </div>
+</footer>
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>
+<script src="/assets/markets.js"></script>
+</body>
+</html>

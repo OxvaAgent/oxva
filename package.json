@@ -1,0 +1,16 @@
+{
+  "name": "oxva",
+  "private": true,
+  "description": "Oxva: reads the market, makes the call, guards every move.",
+  "scripts": {
+    "test": "node scripts/test-gate.js && node scripts/test-read.js && node scripts/test-calls.js && node scripts/test-wall.js && node scripts/test-rpc.mjs && node scripts/test-token.js",
+    "build": "node scripts/build.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.6.0",
+    "@netlify/blobs": "11.1.8"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

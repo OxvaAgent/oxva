@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Every call Oxva has made, graded against the price afterwards: working, against or invalidated. Nothing is deleted.">
+<meta name="theme-color" content="#060807">
+<link rel="canonical" href="https://oxvaagent.com/calls/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oxva">
+<meta property="og:url" content="https://oxvaagent.com/calls/">
+<meta property="og:title" content="Oxva Calls: every call, graded in public">
+<meta property="og:description" content="Every call Oxva has made, graded against the price afterwards: working, against or invalidated. Nothing is deleted.">
+<meta property="og:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:secure_url" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Oxva: reads the market, guards every move. Robinhood Chain onchain agent.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oxva Calls: every call, graded in public">
+<meta name="twitter:description" content="Every call Oxva has made, graded against the price afterwards: working, against or invalidated. Nothing is deleted.">
+<meta name="twitter:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<title>Oxva Calls</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Calls: the record first, then every batch of calls, newest first, then the rules. */
+.rec{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--ink);margin-top:34px}
+.rec div{padding:20px 18px 8px 0;min-width:0}
+.rec div+div{padding-left:18px;border-left:1px solid var(--line)}
+.rec b{display:block;font-family:var(--f-display);font-weight:350;font-size:clamp(36px,4.4vw,56px);line-height:1;font-variant-numeric:tabular-nums}
+.rec span{display:block;margin-top:8px;color:var(--mute)}
+.split{display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:18px;background:var(--line)}
+.split i{display:block;height:100%}
+.split-key{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;color:var(--mute)}
+.split-key i{display:inline-block;width:10px;height:6px;border-radius:2px;margin-right:6px;vertical-align:middle}
+/* the monthly archive of calls older than two weeks (calls.js) */
+.archive{margin-top:10px;color:var(--mute)}
+.archive a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4);margin-left:10px}
+@media (max-width:820px){.rec{grid-template-columns:repeat(2,minmax(0,1fr))}.rec div:nth-child(odd){padding-left:0;border-left:0}.rec div{border-bottom:1px solid var(--line);padding-bottom:14px}}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:46px 0 18px}
+.fgroup{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:6px 13px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.batch{margin-top:30px}
+.batch-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-bottom:10px;color:var(--mute)}
+.batch-head b{font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--ink);text-transform:none;letter-spacing:0}
+.empty{margin-top:24px}
+
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px;border-top:1px solid var(--ink)}
+.rules div{padding:18px 0;border-bottom:1px solid var(--line);min-width:0}
+.rules h4{font-family:var(--f-display);font-size:22px}
+.rules p{color:var(--ink-2);margin-top:6px;font-size:15px}
+@media (max-width:820px){.rules{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-page="calls">
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="Oxva home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      OXVA
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="/#token" class="nav-token">$OXVA</a>
+      <a href="/calls/" data-nav="calls">Calls</a>
+      <a href="/markets/" data-nav="markets">Markets</a>
+      <a href="/chat/" data-nav="chat">Chat</a>
+      <a href="/wall/" data-nav="wall">The wall</a>
+      <a href="/vault/" data-nav="vault">Vault</a>
+      <a href="/read/" data-nav="read">Read a token</a>
+      <a href="/docs/" data-nav="docs">Docs</a>
+    </nav>
+    <button class="btn btn-line nav-wallet" type="button" id="nav-wallet" hidden>Connect wallet</button>
+    <a class="btn btn-ink nav-ask" href="/chat/">Ask Oxva <span class="arr">→</span></a>
+  </div>
+</header>
+
+<main>
+  <section class="page-head" id="record">
+    <div class="wrap">
+      <span class="mono kicker">Oxva calls · every four hours</span>
+      <h1 class="h1">Every call, <em>graded in public.</em></h1>
+      <p class="lede">Each call is stored when it is made and marked against the price afterwards. An invalidated call stays invalidated, and nothing is deleted: after two weeks a call moves to a monthly archive and still counts in the record.</p>
+      <div class="rec">
+        <div><b id="r-total">—</b><span class="mono">Calls made</span></div>
+        <div><b id="r-graded">—</b><span class="mono">Buy &amp; sell graded</span></div>
+        <div><b id="r-working" class="s-working">—</b><span class="mono">Working</span></div>
+        <div><b id="r-against" class="s-against">—</b><span class="mono">Against</span></div>
+        <div><b id="r-invalid" class="s-invalidated">—</b><span class="mono">Invalidated</span></div>
+      </div>
+      <div class="split" id="split" aria-hidden="true"></div>
+      <div class="split-key mono"><span><i style="background:var(--up)"></i>Working</span><span><i style="background:var(--flat)"></i>Against</span><span><i style="background:var(--down)"></i>Invalidated</span><span id="r-rate"></span><span id="r-next"></span></div>
+      <p class="archive mono" id="archive"></p>
+
+      <div class="filters" role="group" aria-label="Filter calls">
+        <div class="fgroup" id="f-action">
+          <button class="chip" type="button" data-v="all" aria-pressed="true">All</button>
+          <button class="chip" type="button" data-v="BUY" aria-pressed="false">Buy</button>
+          <button class="chip" type="button" data-v="SELL" aria-pressed="false">Sell</button>
+          <button class="chip" type="button" data-v="WAIT" aria-pressed="false">Wait</button>
+          <button class="chip" type="button" data-v="AVOID" aria-pressed="false">Avoid</button>
+        </div>
+        <div class="fgroup" id="f-status">
+          <button class="chip" type="button" data-v="all" aria-pressed="true">Any status</button>
+          <button class="chip" type="button" data-v="working" aria-pressed="false">Working</button>
+          <button class="chip" type="button" data-v="against" aria-pressed="false">Against</button>
+          <button class="chip" type="button" data-v="invalidated" aria-pressed="false">Invalidated</button>
+        </div>
+      </div>
+      <div id="batches" aria-live="polite"><div class="calls-grid" id="loading-grid"></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="mono">How a call is made and graded</span>
+        <h2 class="h2">The rules, <em>before the fact.</em></h2>
+        <p>Fixed rules, published here and on the Read page. The same data always gives the same call.</p>
+      </div>
+      <div class="rules" id="rules">
+        <div><h4>When</h4><p>A new batch every <span data-rule="slotHours">4</span> hours, on every token Oxva watches, at 00:00, 04:00, 08:00, 12:00, 16:00 and 20:00 UTC.</p></div>
+        <div><h4>The action</h4><p>Leaning up becomes buy, leaning down becomes sell, no clear edge becomes wait. A contract that fails any of the nine checks becomes avoid.</p></div>
+        <div><h4>Entry zone</h4><p>The call price plus and minus a band sized to recent swings: between <span data-rule="bandMin">0.6</span>% and <span data-rule="bandMax">5</span>% each way.</p></div>
+        <div><h4>Invalidation</h4><p><span data-rule="invalidationBands">2.5</span> bands below the call price for a buy, above it for a sell, and never closer than <span data-rule="minInvalidationPct">3</span>%. Touching it ends the call.</p></div>
+        <div><h4>No chasing</h4><p>After a very large move in 24 hours (7.5% for a Robinhood stock token, 30% for other tokens) a buy or sell becomes wait: such moves often snap back.</p></div>
+        <div><h4>One live call</h4><p>While a buy or sell on a token is still being graded, the same call is not made again every four hours, so one view counts once in the record.</p></div>
+        <div><h4>Grading</h4><p>Working when the price is on the right side of the call price, against when it is not. Graded for <span data-rule="gradeHours">72</span> hours, then closed with its last grade.</p></div>
+        <div><h4>What counts</h4><p>Only buy and sell calls count toward the hit rate. Wait and avoid calls are shown but not scored.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="/" aria-label="Oxva home">
+          <svg viewBox="503 308 538 406" aria-hidden="true"><path fill="currentColor" d="M506.5 597L608.1 395.9A160 160 0 0 1 750.9 308L931 308A110 110 0 0 1 1039.5 400L795.7 400A100 100 0 0 0 706.4 454.9L679.2 509ZM1040.8 425A110 110 0 0 1 1031.1 463.6L959.8 620.3A160 160 0 0 1 814.2 714L603 714A100 100 0 0 1 503.3 622.3L644.2 578.2L622.1 622L772 622A100 100 0 0 0 860 569.5L922.6 453.5Z"/></svg>
+          OXVA
+        </a>
+        <p>Reads the market, makes the call, and guards every move an agent makes with your money.</p>
+        <!-- Social links: when a link is ready, add href="https://…" target="_blank" rel="noopener" to its <a> and remove aria-disabled. -->
+        <div class="socials">
+          <a class="soc" aria-disabled="true" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
+          <a class="soc" aria-disabled="true" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span class="sr-only">X</span></a>
+          <a class="soc" aria-disabled="true" title="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.94 3.32a1 1 0 0 0-1.03-.15L2.58 10.4a1 1 0 0 0 .06 1.88l4.55 1.5 1.75 5.43a1 1 0 0 0 1.66.42l2.53-2.47 4.47 3.29a1 1 0 0 0 1.57-.6l3.1-15.3a1 1 0 0 0-.33-1.03ZM9.9 14.37l-.73 3.07-1.04-3.23 9.07-6.53Z"/></svg><span class="sr-only">Telegram</span></a>
+        </div>
+      </div>
+      <div><h5 class="mono">Use</h5><a href="/chat/">Chat with Oxva</a><a href="/calls/">Calls &amp; track record</a><a href="/markets/">Markets</a><a href="/read/">Read a token</a><a href="/docs/">Docs</a></div>
+      <div><h5 class="mono">The wall</h5><a href="/vault/">Create a vault</a><a href="/wall/">Try the wall</a><a href="/wall/#pipeline">How a transaction is checked</a><a href="/wall/#security">Security model</a><a href="/#token">$OXVA</a></div>
+    </div>
+    <div class="legal mono"><span>© 2026 Oxva</span><span>Calls and reads are automated views of public data, not financial advice.</span></div>
+  </div>
+</footer>
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>
+<script src="/assets/calls.js"></script>
+</body>
+</html>

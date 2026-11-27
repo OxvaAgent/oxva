@@ -1,0 +1,98 @@
+<title>Oxva Markets</title>
+<meta name="description" content="Live price, liquidity and volume for every token Oxva watches, next to its latest call.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Markets: one table, live numbers on the left, Oxva's latest call on the right. */
+.mt{min-width:880px;margin-top:30px}
+/* the token cell stays a table cell (display:flex on a td breaks its height and border line) */
+.mt td.tok{white-space:nowrap}
+.mt td.tok .sym{margin-right:10px}
+.mt .sym{font-family:var(--f-display);font-size:24px;line-height:1}
+.mt .chg.pos{color:var(--up)}.mt .chg.neg{color:var(--down)}
+.share{display:flex;align-items:center;gap:8px}
+.share .tr{width:70px;height:5px;border-radius:3px;background:rgba(163,56,42,.55);overflow:hidden}
+.share .tr b{display:block;height:100%;background:var(--up)}
+.callcell{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mt a.go{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--ink-2)}
+.mt tr.row:hover td{background:var(--card)}
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-top:14px;color:var(--mute)}
+.bar button{border:0;background:none;padding:0;color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase}
+
+/* what the call column means, under the table */
+.key{margin-top:40px;border-top:1px solid var(--line);padding-top:22px}
+.key dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 36px;margin:14px 0 0}
+.key dl>div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:start}
+.key dt{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-top:2px}
+.key dd{margin:0;color:var(--ink-2);font-size:15px;line-height:1.5}
+.key dd b{font-weight:500}
+.key .more{display:inline-block;margin-top:18px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--ink-2)}
+@media (max-width:900px){.key dl{grid-template-columns:minmax(0,1fr)}}
+
+/* phones and small tablets (the table needs 880px): each token is a small card instead of a wide table you
+   have to scroll sideways, so the call is in view without swiping. The cells keep their order; the grid places them. */
+@media (max-width:920px){
+  .tscroll{overflow:visible}
+  .mt{min-width:0;display:block;margin-top:22px}
+  .mt thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .mt tbody{display:block}
+  .mt tr.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"tok tok price" "tok tok chg" "liq vol share" "call call go";gap:2px 12px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .mt tr.row td{display:block;padding:0;border:0;min-width:0}
+  .mt tr.row:hover td{background:none}
+  .mt td.tok{grid-area:tok;align-self:center;white-space:normal}
+  .mt td.tok .sym{display:block;margin:0 0 4px}
+  .mt td.col-price{grid-area:price;font-size:15.5px}
+  .mt td.col-chg{grid-area:chg}
+  .mt td.col-liq{grid-area:liq;text-align:left}
+  .mt td.col-vol{grid-area:vol;text-align:left}
+  .mt td.col-share{grid-area:share}
+  .mt td[data-l]{margin-top:12px}
+  .mt td[data-l]::before{content:attr(data-l);display:block;margin-bottom:3px;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+  .mt td.col-share .share .tr{width:44px}
+  .mt td.col-call{grid-area:call;margin-top:14px;align-self:center}
+  .mt td.col-go{grid-area:go;margin-top:14px;align-self:center;text-align:right}
+  .key dl>div{grid-template-columns:minmax(0,1fr);gap:6px}
+}
+</style>
+
+<!-- @nav -->
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <span class="mono kicker">Oxva markets · live</span>
+      <h1 class="h1">The chain <em>at a glance.</em></h1>
+      <p class="lede">Every token Oxva watches: live price, liquidity and volume from the deepest pools, the share of trades that were buys in the last day, and Oxva's latest call.</p>
+      <div class="tscroll">
+        <table class="t mt">
+          <thead><tr><th>Token</th><th class="r">Price</th><th class="r">24h</th><th class="r">Liquidity</th><th class="r">24h volume</th><th>Buys, 24h</th><th>Latest call</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="bar mono"><span id="m-time">Reading markets…</span><button type="button" id="refresh">Refresh</button></div>
+      <div class="key">
+        <span class="mono kicker">Reading the call column</span>
+        <dl>
+          <div><dt><span class="pill a-BUY"><i></i>BUY</span><span class="pill a-SELL"><i></i>SELL</span></dt><dd>Oxva leans up or down for the next few hours.</dd></div>
+          <div><dt><span class="pill a-WAIT"><i></i>WAIT</span></dt><dd>No clear edge, or the price already moved a lot in a day. Not an error: Oxva only watches.</dd></div>
+          <div><dt><span class="pill a-AVOID"><i></i>AVOID</span></dt><dd>The contract failed a safety check, whatever the market says.</dd></div>
+          <div><dt><span class="dots" aria-hidden="true"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span></span></dt><dd>Conviction, from 1 to 5.</dd></div>
+          <div><dt class="mono muted">Status</dt><dd><b class="s-working">Working</b>: price moved with the call. <b class="s-against">Against</b>: it moved the other way, not yet to the stop. <b class="s-invalidated">Invalidated</b>: it hit the stop. <b>Open</b>: too new to grade.</dd></div>
+          <div><dt class="mono muted">Watching</dt><dd>WAIT and AVOID calls. Shown, but not counted in the hit rate.</dd></div>
+        </dl>
+        <a class="more" href="/docs/#calls">How calls are made →</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- @footer -->
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>
+<script src="/assets/markets.js"></script>

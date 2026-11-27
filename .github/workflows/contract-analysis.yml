@@ -1,0 +1,50 @@
+# Static analysis of the Oxva Vault contract with Slither (Trail of Bits).
+# Runs when anything under contracts/ changes, and on demand from the Actions tab.
+# This is automated analysis, not an audit. Findings are reviewed by hand in docs/contract-analysis.md.
+name: Contract analysis
+
+on:
+  pull_request:
+    paths: ["contracts/**", ".github/workflows/contract-analysis.yml"]
+  push:
+    branches: [main]
+    paths: ["contracts/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  slither:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+      - name: Install the contract toolchain
+        working-directory: contracts
+        run: npm ci
+      - name: Run Slither
+        id: slither
+        uses: crytic/slither-action@b52cc1cbfee9ca3e8722dd5224299d16c9a6b80f # v0.4.2
+        continue-on-error: true
+        with:
+          target: contracts/
+          slither-version: "0.11.6"
+          slither-args: --filter-paths "contracts/test|node_modules" --exclude-dependencies --checklist --markdown-root ${{ github.server_url }}/${{ github.repository }}/blob/${{ github.sha }}/
+          fail-on: none
+          slither-config: contracts/slither.config.json
+          sarif: slither.sarif
+      - name: Show the findings
+        env:
+          REPORT: ${{ steps.slither.outputs.stdout }}
+        run: |
+          echo "$REPORT" > slither-report.md
+          { echo "## Slither findings"; cat slither-report.md; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: slither-report
+          path: |
+            slither.sarif
+            slither-report.md

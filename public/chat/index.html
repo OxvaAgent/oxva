@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ask Oxva about any token on Robinhood Chain, Ethereum, BNB Chain, Base, Arbitrum or Polygon. It answers from live market data and its own calls.">
+<meta name="theme-color" content="#060807">
+<link rel="canonical" href="https://oxvaagent.com/chat/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oxva">
+<meta property="og:url" content="https://oxvaagent.com/chat/">
+<meta property="og:title" content="Ask Oxva">
+<meta property="og:description" content="Ask Oxva about any token on Robinhood Chain, Ethereum, BNB Chain, Base, Arbitrum or Polygon. It answers from live market data and its own calls.">
+<meta property="og:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:secure_url" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Oxva: reads the market, guards every move. Robinhood Chain onchain agent.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ask Oxva">
+<meta name="twitter:description" content="Ask Oxva about any token on Robinhood Chain, Ethereum, BNB Chain, Base, Arbitrum or Polygon. It answers from live market data and its own calls.">
+<meta name="twitter:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<title>Oxva Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Chat: context on the left, the conversation on the right with the composer pinned under it. */
+.chat-wrap{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:40px;padding-block:44px 30px;align-items:start}
+.side{position:sticky;top:96px}
+.side .h1{font-size:clamp(46px,6vw,84px)}
+.side .lede{font-size:16.5px}
+.side h3{margin-top:26px;color:var(--mute)}
+.sugs{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:10px}
+.sug{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:7px 14px;font-size:14px;color:var(--ink-2);text-align:left;transition:all .2s}
+.sug:hover{border-color:var(--ink);color:var(--ink)}
+.tokbox{display:flex;gap:8px;margin-top:10px}
+.tokbox input,.tokbox select{border:1px solid var(--line-2);background:var(--card);border-radius:8px;padding:9px 10px;font-size:13.5px;min-width:0}
+.tokbox input{flex:1;font-family:var(--f-mono)}
+.fine{margin-top:22px;color:var(--mute);font-size:13.5px}
+.convo{border:1px solid var(--line);border-radius:10px;background:var(--card);display:flex;flex-direction:column;min-height:560px;max-height:calc(100vh - 140px)}
+.log{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:18px}
+.msg{max-width:88%;font-size:15.5px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--ink);color:var(--paper);padding:11px 15px;border-radius:16px 16px 4px 16px}
+.msg.oxva{align-self:flex-start;display:grid;grid-template-columns:26px minmax(0,1fr);gap:12px}
+.msg.oxva svg{width:24px;height:18px;margin-top:3px;color:var(--ink)}
+.msg.oxva .txt{color:var(--ink-2)}
+.msg.oxva.err .txt{color:var(--down)}
+.typing{display:inline-flex;gap:4px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--mute);animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{50%{opacity:.25}}
+.hello{color:var(--ink-2)}
+.hello b{font-family:var(--f-display);font-weight:400;font-size:26px;display:block;color:var(--ink);margin-bottom:6px}
+.composer{border-top:1px solid var(--line);padding:14px;display:flex;gap:10px;align-items:flex-end}
+.composer textarea{flex:1;min-width:0;resize:none;border:1px solid var(--line-2);border-radius:10px;padding:12px 14px;background:var(--paper);font-size:15.5px;line-height:1.45;max-height:180px;outline:none}
+.composer textarea:focus{border-color:var(--ink)}
+.composer .btn{border-radius:10px;padding:13px 18px}
+.cfoot{display:flex;justify-content:space-between;gap:10px;padding:0 16px 12px;color:var(--mute)}
+.cfoot button{border:0;background:none;padding:0;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media (max-width:920px){.chat-wrap{grid-template-columns:minmax(0,1fr);gap:24px}.side{position:static}.convo{min-height:480px;max-height:none}.log{max-height:65vh}}
+</style>
+</head>
+<body data-page="chat">
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="Oxva home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      OXVA
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="/#token" class="nav-token">$OXVA</a>
+      <a href="/calls/" data-nav="calls">Calls</a>
+      <a href="/markets/" data-nav="markets">Markets</a>
+      <a href="/chat/" data-nav="chat">Chat</a>
+      <a href="/wall/" data-nav="wall">The wall</a>
+      <a href="/vault/" data-nav="vault">Vault</a>
+      <a href="/read/" data-nav="read">Read a token</a>
+      <a href="/docs/" data-nav="docs">Docs</a>
+    </nav>
+    <button class="btn btn-line nav-wallet" type="button" id="nav-wallet" hidden>Connect wallet</button>
+    <a class="btn btn-ink nav-ask" href="/chat/">Ask Oxva <span class="arr">→</span></a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap chat-wrap">
+    <aside class="side">
+      <span class="mono kicker">Oxva chat · live data</span>
+      <h1 class="h1">Ask <em>Oxva.</em></h1>
+      <p class="lede">Ask about a token, a call, or why the wall would stop a transaction. Paste a contract address and Oxva reads it live before answering.</p>
+      <h3 class="mono">Try</h3>
+      <div class="sugs" id="sugs">
+        <button class="sug" type="button">What are your calls right now?</button>
+        <button class="sug" type="button">Which token has your strongest call, and why?</button>
+        <button class="sug" type="button">Why would the wall deny a transaction?</button>
+        <button class="sug" type="button">What does conviction 2 out of 5 mean?</button>
+      </div>
+      <h3 class="mono">Token for this chat (optional)</h3>
+      <div class="tokbox">
+        <input id="tok" type="text" placeholder="0x… contract address" autocomplete="off" spellcheck="false" maxlength="64" aria-label="Token contract address">
+        <select id="tok-chain" aria-label="Chain"><option value="auto">Auto</option><option value="robinhood">Robinhood Chain</option><option value="ethereum">Ethereum</option><option value="bsc">BNB Chain</option><option value="base">Base</option><option value="arbitrum">Arbitrum</option><option value="polygon">Polygon</option></select>
+      </div>
+      <p class="fine">Answers come from a Claude model by Anthropic, given Oxva's live data. Messages go through Oxva's server on Netlify to Anthropic to get an answer and are not stored by Oxva. Not financial advice. There is a limit on messages per hour.</p>
+    </aside>
+
+    <section class="convo" aria-label="Conversation">
+      <div class="log" id="log" aria-live="polite">
+        <div class="msg oxva hello-row">
+          <svg viewBox="503 308 538 406" aria-hidden="true"><path fill="currentColor" d="M506.5 597L608.1 395.9A160 160 0 0 1 750.9 308L931 308A110 110 0 0 1 1039.5 400L795.7 400A100 100 0 0 0 706.4 454.9L679.2 509ZM1040.8 425A110 110 0 0 1 1031.1 463.6L959.8 620.3A160 160 0 0 1 814.2 714L603 714A100 100 0 0 1 503.3 622.3L644.2 578.2L622.1 622L772 622A100 100 0 0 0 860 569.5L922.6 453.5Z"/></svg>
+          <div class="txt hello"><b>I read, then I answer.</b>Ask me about my latest calls, any token on six chains, or how the wall decides. I only use numbers I can see, and I'll tell you when I can't.</div>
+        </div>
+      </div>
+      <form class="composer" id="form">
+        <textarea id="input" rows="1" maxlength="1200" placeholder="Ask about a token, a call, or the wall…" aria-label="Your message"></textarea>
+        <button class="btn btn-ink" id="send" type="submit">Send</button>
+      </form>
+      <div class="cfoot mono"><span id="count">0 / 1200</span><button type="button" id="clear">New chat</button></div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="/" aria-label="Oxva home">
+          <svg viewBox="503 308 538 406" aria-hidden="true"><path fill="currentColor" d="M506.5 597L608.1 395.9A160 160 0 0 1 750.9 308L931 308A110 110 0 0 1 1039.5 400L795.7 400A100 100 0 0 0 706.4 454.9L679.2 509ZM1040.8 425A110 110 0 0 1 1031.1 463.6L959.8 620.3A160 160 0 0 1 814.2 714L603 714A100 100 0 0 1 503.3 622.3L644.2 578.2L622.1 622L772 622A100 100 0 0 0 860 569.5L922.6 453.5Z"/></svg>
+          OXVA
+        </a>
+        <p>Reads the market, makes the call, and guards every move an agent makes with your money.</p>
+        <!-- Social links: when a link is ready, add href="https://…" target="_blank" rel="noopener" to its <a> and remove aria-disabled. -->
+        <div class="socials">
+          <a class="soc" aria-disabled="true" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
+          <a class="soc" aria-disabled="true" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span class="sr-only">X</span></a>
+          <a class="soc" aria-disabled="true" title="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.94 3.32a1 1 0 0 0-1.03-.15L2.58 10.4a1 1 0 0 0 .06 1.88l4.55 1.5 1.75 5.43a1 1 0 0 0 1.66.42l2.53-2.47 4.47 3.29a1 1 0 0 0 1.57-.6l3.1-15.3a1 1 0 0 0-.33-1.03ZM9.9 14.37l-.73 3.07-1.04-3.23 9.07-6.53Z"/></svg><span class="sr-only">Telegram</span></a>
+        </div>
+      </div>
+      <div><h5 class="mono">Use</h5><a href="/chat/">Chat with Oxva</a><a href="/calls/">Calls &amp; track record</a><a href="/markets/">Markets</a><a href="/read/">Read a token</a><a href="/docs/">Docs</a></div>
+      <div><h5 class="mono">The wall</h5><a href="/vault/">Create a vault</a><a href="/wall/">Try the wall</a><a href="/wall/#pipeline">How a transaction is checked</a><a href="/wall/#security">Security model</a><a href="/#token">$OXVA</a></div>
+    </div>
+    <div class="legal mono"><span>© 2026 Oxva</span><span>Calls and reads are automated views of public data, not financial advice.</span></div>
+  </div>
+</footer>
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>
+<script src="/assets/chat.js"></script>
+</body>
+</html>
