@@ -228,7 +228,7 @@
     var badge = $('v-ver');
     if (S.verified) {
       badge.className = 'verify ok'; badge.textContent = 'Verified Oxva code · ' + A.version;
-      say('v-check', 'The code at this address is exactly the Oxva vault build this page ships (OxvaVault ' + A.version + ', independent audit planned).', 'ok');
+      say('v-check', 'The code at this address is exactly the Oxva vault build this page ships (OxvaVault ' + A.version + ').', 'ok');
     } else if (NET.main) {
       badge.className = 'verify bad'; badge.textContent = 'Not Oxva code';
       say('v-check', 'Warning: the code at this address is not the Oxva vault build. Do not send money to it. Deposits are blocked on this page.', 'err');
