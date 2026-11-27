@@ -139,7 +139,36 @@
     });
   });
 
-  window.OxvaUI = { el: el, price: price, usd: usd, pct: pct, ago: ago, until: until, dots: dots, pill: pill, callCard: callCard, shareButton: shareButton, copyText: copyText, getCalls: getCalls, skeletonCards: skeletonCards, CHAIN_NAMES: CHAIN_NAMES };
+  /* The hit rate in context: the record per rule version, calls still running, how fast stops were hit, how long calls
+   * last, and since when. Same wording as recordContext() in lib/live-html.mjs, which fills the page before scripts run. */
+  var CTX_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function ctxDay(t) { var d = new Date(t); return d.getUTCDate() + ' ' + CTX_MONTHS[d.getUTCMonth()]; }
+  function ctxHours(h) { return h < 1 ? Math.round(h * 60) + ' min' : (h < 10 ? h.toFixed(1).replace(/\.0$/, '') : Math.round(h)) + ' h'; }
+  function recordContext(box, ctx) {
+    if (!box || !ctx || !Array.isArray(ctx.versions)) return;
+    box.textContent = '';
+    box.appendChild(el('p', 'ctx-head mono', 'The hit rate in context'));
+    var ul = el('ul', 'ctx-rows');
+    ctx.versions.slice().reverse().forEach(function (v) {
+      var when = v.from && v.to ? ctxDay(v.from) + ' – ' + ctxDay(v.to) : v.from ? 'since ' + ctxDay(v.from) : (v.to ? 'until ' + ctxDay(v.to) : '');
+      var nums = v.graded ? v.graded + ' graded · ' + v.hitRate + '% working' : 'none graded yet';
+      if (v.running) nums += ' · ' + v.running + ' still running';
+      var li = el('li');
+      li.appendChild(el('span', 'ctx-v', 'Rules v' + v.v + (when ? ' · ' + when : '')));
+      li.appendChild(el('span', 'ctx-l', v.label));
+      li.appendChild(el('span', 'ctx-n', nums));
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+    var note = [];
+    if (ctx.running) note.push(ctx.running + ' buy and sell call' + (ctx.running > 1 ? 's are' : ' is') + ' still running and can still change grade.');
+    if (ctx.stopMedianHours != null) note.push(ctx.stopsMeasured + ' hit their stop, a median ' + ctxHours(ctx.stopMedianHours) + ' after the call.');
+    if (ctx.closedAvgHours != null) note.push('Closed calls lasted ' + ctxHours(ctx.closedAvgHours) + ' on average; a call is graded for up to ' + ctx.gradeHours + ' h.');
+    if (ctx.since) note.push('Record since ' + ctxDay(ctx.since) + ' (' + ctx.days + ' day' + (ctx.days > 1 ? 's' : '') + '). Nothing is removed.');
+    box.appendChild(el('p', 'ctx-note', note.join(' ')));
+  }
+
+  window.OxvaUI = { el: el, recordContext: recordContext, price: price, usd: usd, pct: pct, ago: ago, until: until, dots: dots, pill: pill, callCard: callCard, shareButton: shareButton, copyText: copyText, getCalls: getCalls, skeletonCards: skeletonCards, CHAIN_NAMES: CHAIN_NAMES };
 
   /* ---------- phone menu ----------
    * On phones the top bar keeps the logo and the wallet button, plus a ≡ button that opens a full-screen menu built from

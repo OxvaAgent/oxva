@@ -4,6 +4,10 @@
   var U = window.OxvaUI;
   var $ = function (id) { return document.getElementById(id); };
   var data = null, fAction = 'all', fStatus = 'all';
+  // /calls/?archive=YYYY-MM shows that month's archived calls as cards instead of the live list
+  var ARCHIVE = (new URLSearchParams(location.search).get('archive') || '').trim();
+  if (!/^20\d\d-(0[1-9]|1[0-2])$/.test(ARCHIVE)) ARCHIVE = '';
+  function monthLabel(m, len) { return new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1, 1)).toLocaleString('en', { month: len || 'long', year: 'numeric', timeZone: 'UTC' }); }
 
   U.skeletonCards($('loading-grid'), 6);
 
@@ -17,6 +21,7 @@
     });
     $('r-rate').textContent = r.hitRate == null ? 'Hit rate: not enough graded calls yet' : 'Hit rate ' + r.hitRate + '%';
     $('r-next').textContent = 'Next batch in ' + U.until(d.nextCallAt);
+    U.recordContext($('r-context'), d.context);
     Array.prototype.forEach.call(document.querySelectorAll('[data-rule]'), function (s) { var k = s.getAttribute('data-rule'); if (d.rules && d.rules[k] != null) s.textContent = d.rules[k]; });
     renderArchive(d.archive || [], d.oldestLiveAt ? d.oldestLiveAt + ((d.rules && d.rules.keepDays) || 14) * 864e5 : null);
   }
@@ -33,10 +38,30 @@
     }
     p.appendChild(document.createTextNode('Older calls, by month:'));
     valid.slice().reverse().forEach(function (m) {
-      var label = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1, 1)).toLocaleString('en', { month: 'short', year: 'numeric', timeZone: 'UTC' });
-      var a = U.el('a', '', label); a.href = '/api/calls?archive=' + m; a.title = 'Every archived call of ' + label + ' (JSON)';
+      var a = U.el('a', '', monthLabel(m, 'short')); a.href = '/calls/?archive=' + m + '#archive-view'; a.title = 'Every archived call of ' + monthLabel(m);
+      if (m === ARCHIVE) a.setAttribute('aria-current', 'page');
       p.appendChild(a);
     });
+  }
+
+  // the archive view: a banner, then the month's calls in the same cards and batches as the live list
+  function showArchive() {
+    var box = $('archive-view'); box.hidden = false; box.textContent = '';
+    box.appendChild(U.el('span', 'mono kicker', 'Archive'));
+    box.appendChild(U.el('h2', '', monthLabel(ARCHIVE)));
+    box.appendChild(U.el('p', '', 'Calls from this month that left the live list after two weeks, with the grade they closed on. They still count in the record above.'));
+    var links = U.el('p', 'mono links');
+    var back = U.el('a', '', '← Live calls'); back.href = '/calls/'; links.appendChild(back);
+    var raw = U.el('a', '', 'The same data as JSON'); raw.href = '/api/calls?archive=' + ARCHIVE; links.appendChild(raw);
+    box.appendChild(links);
+    $('batches').textContent = ''; U.skeletonCards($('batches'), 3);
+    return fetch('/api/calls?archive=' + ARCHIVE, { headers: { accept: 'application/json' } })
+      .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || 'HTTP ' + r.status); return d; }); })
+      .then(function (a) {
+        data = { calls: Array.isArray(a.calls) ? a.calls : [] };
+        if (!data.calls.length) { var b = $('batches'); b.textContent = ''; b.appendChild(U.el('p', 'notice empty', 'No calls are archived for ' + monthLabel(ARCHIVE) + '.')); return; }
+        renderBatches();
+      });
   }
 
   function renderBatches() {
@@ -72,8 +97,14 @@
   wire('f-action', function (v) { fAction = v; });
   wire('f-status', function (v) { fStatus = v; });
 
-  U.getCalls().then(function (d) { data = d; renderRecord(d); renderBatches(); }).catch(function () {
+  function failed() {
     var box = $('batches'); box.textContent = '';
     box.appendChild(U.el('p', 'notice err', 'Calls could not be loaded right now. Try again in a minute.'));
-  });
+  }
+  if (ARCHIVE) {
+    U.getCalls().then(renderRecord, function () { /* the record is optional here */ });
+    showArchive().catch(failed);
+  } else {
+    U.getCalls().then(function (d) { data = d; renderRecord(d); renderBatches(); }).catch(failed);
+  }
 })();

@@ -140,7 +140,8 @@
 
         <article class="chap" id="record">
           <h2>Track record</h2>
-          <p>Every call is stored when it is made and graded against the price afterwards. Nothing is deleted: after two weeks a call leaves the live list for a monthly archive (<code>/api/calls?archive=YYYY-MM</code>, linked on <a href="/calls/#record">Calls</a>), and the record keeps counting it.</p>
+          <p>Every call is stored when it is made and graded against the price afterwards. Nothing is deleted: after two weeks a call leaves the live list for a monthly archive, and the record keeps counting it. Each month opens on <a href="/calls/#record">Calls</a> as cards (<code>/calls/?archive=YYYY-MM</code>), or as JSON at <code>/api/calls?archive=YYYY-MM</code>.</p>
+          <p>To hear about new batches, follow Oxva on <a href="https://t.me/oxvaagent" target="_blank" rel="noopener">Telegram</a> or <a href="https://x.com/oxvaagent" target="_blank" rel="noopener">X</a>, or add the <a href="/calls.xml">RSS feed</a> to a reader. The <a href="/status/">status page</a> shows when the last batch ran.</p>
           <ul>
             <li><b>Open</b>: a BUY or SELL younger than 30 minutes, not graded yet.</li>
             <li><b>Working</b>: the price has moved the way the call said.</li>
@@ -149,6 +150,7 @@
             <li><b>Watching</b>: WAIT and AVOID calls. They are shown but not counted in the score.</li>
           </ul>
           <p>A call is graded for three days, then closes with its last status. The <b>hit rate</b> is the share of graded BUY and SELL calls that are working. See it live on <a href="/calls/#record">Calls</a>.</p>
+          <p>The rules changed twice, so the record is also shown <b>per rule version</b>: v1, the first rules; v2 from 23 Nov, stock tokens judged by stock-sized moves; v3 from 26 Nov, no chasing, a 3% minimum stop and one live call per token. Next to the hit rate the site also shows how many calls are still running (their grade can still change), how fast stops were hit, how long calls lasted, and since when the record runs. The overall hit rate is never hidden: the context sits beside it.</p>
         </article>
 
         <article class="chap" id="read">
@@ -199,10 +201,10 @@
             <li>Set the agent address, the rules and the allowlist, then create it. Your wallet signs and pays the gas; you become the owner.</li>
             <li>The page checks that the code at the address is exactly Oxva’s build and shows <b>Verified Oxva code</b>.</li>
           </ol>
-          <p>Want to see one first? Open <a href="/vault/?net=mainnet&amp;v=0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14">Oxva’s own example vault</a> with its full history.</p>
-          <p class="note warn"><b>Mainnet is an unaudited beta.</b> The contract passes Oxva’s own tests, including hundreds of random actions checked against a model of its rules, but no outside firm has audited it. A bug could lose funds, there is no balance limit, and nobody can recover funds or undo a transaction. Only put in what you can afford to lose.</p>
-          <h3>Automated analysis (not an audit)</h3>
-          <p>On 27 November 2026 the contract was run through two automated analysers, Slither (Trail of Bits) and Solhint, and every finding was reviewed by hand. Result: no high or medium findings. There were six low ones (a withdrawal or agent address could be set to zero by the owner, and the hourly budget window uses the block time) and four informational ones (one small piece of assembly, three low-level calls that all check their result). None needs a change to the contract. Slither runs again automatically whenever the contract changes. This is not an audit, and the mainnet vault stays a beta.</p>
+          <p>Want to see one first? Open <a href="/vault/?net=mainnet&amp;v=0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14">Oxva’s own example vault</a> with its full history, or read its code on <a href="https://robinhoodchain.blockscout.com/address/0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14?tab=contract" target="_blank" rel="noopener">Blockscout</a>: <code>0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14</code>, verified on Blockscout and Sourcify as an exact match with the published source.</p>
+          <p class="note warn"><b>Mainnet is a beta. Security: open source, verified on-chain, 21 tests and automated analysis. Independent audit: planned, not done yet.</b> A bug could still lose funds, there is no balance limit, and nobody can recover funds or undo a transaction. Only put in what you can afford to lose.</p>
+          <h3>Automated analysis</h3>
+          <p>On 27 November 2026 the contract was run through two automated analysers, Slither (Trail of Bits) and Solhint, and every finding was reviewed by hand. Result: no high or medium findings. There were six low ones (a withdrawal or agent address could be set to zero by the owner, and the hourly budget window uses the block time) and four informational ones (one small piece of assembly, three low-level calls that all check their result). None needs a change to the contract. Slither runs again automatically whenever the contract changes. An independent audit is planned; until it is done, the mainnet vault stays a beta.</p>
         </article>
 
         <article class="chap" id="wallets">

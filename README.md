@@ -16,7 +16,7 @@ Website: <https://oxvaagent.com> · Docs: <https://oxvaagent.com/docs/> · X: [@
 | **Read a token** | Paste a token on Robinhood Chain, Ethereum, BNB Chain, Base, Arbitrum or Polygon: a market read plus nine contract checks | Live |
 | **Chat** | Ask Oxva about a token or a call; a Claude model answers from live data | Live |
 | **The wall** | A policy engine for agent transactions (budget, caps, allowlist, slippage, replay, approvals), as a browser simulator | Demo |
-| **Oxva Vault** | The wall as a smart contract you own: the agent proposes, the contract allows, holds for your approval, or refuses | Testnet, and mainnet as an unaudited beta |
+| **Oxva Vault** | The wall as a smart contract you own: the agent proposes, the contract allows, holds for your approval, or refuses | Testnet, and mainnet as a beta (independent audit planned) |
 | **$OXVA** | A token for this agent is an idea, not a product. Nothing has launched and no contract exists | Not launched |
 
 Calls and reads are automated readings of public data, made by fixed rules. They are not financial advice.
@@ -27,7 +27,7 @@ Calls and reads are automated readings of public data, made by fixed rules. They
 - The owner sets an hourly budget, a cap per call, an approval threshold and an allowlist. The agent can only propose: small calls inside the rules go through, larger ones wait for the owner, anything else is refused. The agent can never move tokens; the owner can pause and withdraw at any time.
 - Visitors create their own vaults from <https://oxvaagent.com/vault/> with their own wallets. Oxva holds no keys.
 - The vault page checks that a vault's code is exactly this build and shows "Verified Oxva code".
-- **Not audited.** The contract passes 21 tests, including a model-based random test of 900 actions, and an automated analysis with Slither and Solhint ([`contracts/ANALYSIS.md`](contracts/ANALYSIS.md)). No outside firm has reviewed it. On mainnet a bug could lose funds: try it on testnet first.
+- **Security:** open source, verified on-chain (Sourcify and Blockscout), 21 tests including a model-based random test of 900 actions, and an automated analysis with Slither and Solhint ([`contracts/ANALYSIS.md`](contracts/ANALYSIS.md)). **Independent audit: planned**, not done yet. On mainnet a bug could still lose funds: try it on testnet first.
 
 | | Mainnet | Testnet |
 |---|---|---|

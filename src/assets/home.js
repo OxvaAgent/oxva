@@ -84,6 +84,7 @@
     $('rec-working').textContent = r.working;
     $('rec-rate').textContent = r.hitRate == null ? '—' : r.hitRate + '%';
     recordChart(r, d.calls, now);
+    U.recordContext($('rec-context'), d.context);
     $('rec-note').textContent = r.graded ? r.against + ' against · ' + r.invalidated + ' invalidated · ' + r.waits + ' waits' : 'No buy or sell call has been graded yet. The record fills in over the next days.';
   }).catch(function () {
     grid.textContent = '';

@@ -41,7 +41,7 @@ const tests = {
     const v = values(Object.assign({}, data, { archive: ["2026-11", "2026-12"] }), NOW);
     assert.ok(v.archive.startsWith("Older calls, by month:"));
     assert.ok(v.archive.indexOf("Dec 2026") < v.archive.indexOf("Nov 2026"), "newest month first");
-    assert.ok(v.archive.includes('href="/api/calls?archive=2026-11"'));
+    assert.ok(v.archive.includes('href="/calls/?archive=2026-11#archive-view"'));
   },
   "the status table lists batches and marks a missed slot"() {
     const v = values(data, NOW);
@@ -58,6 +58,20 @@ const tests = {
       assert.ok(!/<img|<script/i.test(v[k]), k + " leaked markup: " + v[k].slice(0, 120));
     }
     assert.ok(v["latest-grid"].includes("&lt;img"));
+  },
+  "the hit rate comes with its context, one row per rule version"() {
+    const context = { versions: [
+      { v: 1, label: "First rules", from: null, to: Date.UTC(2026, 10, 23, 12), graded: 72, working: 15, hitRate: 20.8, running: 0 },
+      { v: 2, label: "Stock <b>scale</b>", from: Date.UTC(2026, 10, 23, 12), to: Date.UTC(2026, 10, 26, 16), graded: 27, working: 10, hitRate: 37, running: 3 },
+      { v: 3, label: "No chasing", from: Date.UTC(2026, 10, 26, 16), to: null, graded: 1, working: 1, hitRate: 100, running: 17 }
+    ], running: 20, stopMedianHours: 4, stopsMeasured: 64, closedAvgHours: 22.4, closedMeasured: 80, gradeHours: 72, since: Date.UTC(2026, 10, 20, 12), days: 7 };
+    const html = values(Object.assign({}, data, { context }), NOW).ctx;
+    assert.ok(html.indexOf("Rules v3 · since 26 Nov") < html.indexOf("Rules v1 · until 23 Nov"), "newest rules first");
+    assert.ok(html.includes("1 graded · 100% working · 17 still running"));
+    assert.ok(html.includes("64 hit their stop, a median 4 h after the call."));
+    assert.ok(html.includes("Record since 20 Nov (7 days)."));
+    assert.ok(html.includes("Stock &lt;b&gt;scale&lt;/b&gt;") && !html.includes("<b>scale"), "labels are escaped");
+    assert.strictEqual(values(data, NOW).ctx, "", "no context in the answer: the block stays empty");
   },
   "missing or odd data never throws"() {
     assert.doesNotThrow(() => render('<!--live:hs-last-->—<!--/live:hs-last-->', {}, NOW));

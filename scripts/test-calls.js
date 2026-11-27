@@ -188,6 +188,40 @@ const tests = {
     assert.strictEqual(v.record.total, 2);
     assert.strictEqual(v.calls.length, 2);
   },
+  'the record context splits calls by rule version and counts what is still running'() {
+    const v1 = Date.UTC(2026, 10, 21, 8), v2 = Date.UTC(2026, 10, 24, 8), v3 = Date.UTC(2026, 10, 27, 8);
+    const mk = (at, action, status, final, endH) => ({ id: 'x' + at + action + status, sym: 'TST', address: T.a, at, action, status, final, now: { at: at + endH * H, move: 0 } });
+    const calls = [
+      mk(v1, 'SELL', 'invalidated', true, 4), mk(v1, 'SELL', 'invalidated', true, 6), mk(v1, 'BUY', 'working', true, 72),
+      mk(v2, 'BUY', 'working', false, 10), mk(v2, 'WAIT', 'watching', false, 1),
+      mk(v3, 'BUY', 'against', false, 2), mk(v3, 'BUY', 'open', false, 0.2)
+    ];
+    const ctx = C.context({ calls, archive: [] }, v3 + 3 * H);
+    const by = Object.fromEntries(ctx.versions.map((v) => [v.v, v]));
+    assert.deepStrictEqual([by[1].graded, by[1].working, by[1].invalidated, by[1].running], [3, 1, 2, 0]);
+    assert.strictEqual(by[1].hitRate, 33.3);
+    assert.deepStrictEqual([by[2].graded, by[2].working, by[2].running], [1, 1, 1]);
+    assert.deepStrictEqual([by[3].graded, by[3].running], [1, 2], 'an open call is running but not graded yet');
+    assert.strictEqual(ctx.running, 3);
+    assert.strictEqual(ctx.stopMedianHours, 5, 'median of 4 h and 6 h');
+    assert.strictEqual(ctx.closedAvgHours, 27.3, '(4 + 6 + 72) / 3');
+    assert.strictEqual(ctx.since, v1);
+    assert.strictEqual(C.versionOf(Date.UTC(2026, 10, 26, 15, 59)), 2);
+    assert.strictEqual(C.versionOf(Date.UTC(2026, 10, 26, 16)), 3);
+    const view = C.view({ calls, slot: 0, updatedAt: v3 }, v3 + 3 * H);
+    assert.ok(view.context && view.context.versions.length === C.RULE_VERSIONS.length, 'the API carries the context');
+  },
+  'retire keeps archived counts per rule version, and an old document counts as v1'() {
+    const keepMs = C.RULES.keepDays * 24 * H, v2 = Date.UTC(2026, 10, 24, 8);
+    const call = { id: 'a', sym: 'TST', address: T.a, at: v2, action: 'BUY', status: 'working', final: true, now: { at: v2 + 72 * H } };
+    const old = { calls: [call], retired: { total: 5, graded: 4, working: 1, against: 1, invalidated: 2, waits: 1, avoids: 0 }, archive: ['2026-11'] };
+    const r = C.retire(old, v2 + keepMs + H);
+    assert.strictEqual(r.doc.retiredBy[1].graded, 4, 'counts archived before versions existed stay with v1');
+    assert.strictEqual(r.doc.retiredBy[2].working, 1);
+    const ctx = C.context(r.doc, v2 + keepMs + H);
+    assert.strictEqual(ctx.versions.find((v) => v.v === 1).graded, 4);
+    assert.strictEqual(ctx.versions.find((v) => v.v === 2).graded, 1);
+  },
   'retire moves calls older than two weeks to the archive, and the record still counts them'() {
     const keepMs = C.RULES.keepDays * 24 * H;
     const old = C.grade(callOn(W, bullish, NOW), 2.5, NOW + H);       // BUY, working

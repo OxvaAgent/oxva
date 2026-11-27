@@ -71,7 +71,7 @@ function wrap(raw, page) {
   const cut = raw.indexOf('</style>') + '</style>'.length;
   if (cut < 8) throw new Error(page.src + ': no </style> found');
   let head = raw.slice(0, cut);
-  const body = raw.slice(cut).trim().replace(/<!-- @(nav|footer) -->/g, (_, k) => PARTIALS[k]).replace(/{{LIVE_VAULT}}/g, LIVE_VAULT);
+  const body = raw.slice(cut).trim().replace(/<!-- @(nav|footer) -->/g, (_, k) => PARTIALS[k]).replace(/{{LIVE_VAULT_SHORT}}/g, LIVE_VAULT.slice(0, 6) + '…' + LIVE_VAULT.slice(-4)).replace(/{{LIVE_VAULT}}/g, LIVE_VAULT);
 
   // description: take it from the page if it has one, so it is not written twice
   let desc = DEFAULT_DESC;

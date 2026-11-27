@@ -115,6 +115,18 @@ body.nav-open{overflow:hidden}
   .nav.has-menu .nav-wallet{margin-left:auto}
 }
 
+/* the hit rate in context (home record, calls page): one row per rule version, then a plain note */
+.ctx{margin-top:18px;padding:18px 20px}
+.ctx:empty{display:none}
+.ctx-head{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--em)}
+.ctx-rows{list-style:none;margin:10px 0 0;padding:0;border-top:1px solid var(--gl)}
+.ctx-rows li{display:grid;grid-template-columns:minmax(150px,auto) minmax(0,1fr) auto;gap:4px 16px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--gl);font-size:14.5px}
+.ctx-v{font-weight:600;color:var(--ink)}
+.ctx-l{color:var(--ink-2)}
+.ctx-n{color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+.ctx-note{margin-top:12px;font-size:14px;color:var(--ink-2);max-width:90ch}
+@media (max-width:720px){.ctx-rows li{grid-template-columns:minmax(0,1fr)}.ctx-n{text-align:left}}
+
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:999px;padding:12px 22px;font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--ink);transition:background .2s,color .2s,opacity .2s;white-space:nowrap}
 .btn-ink{background:var(--ink);color:var(--paper)}
@@ -167,6 +179,10 @@ a.call:hover,.c-card:hover{background:var(--card)}
 .c-share{display:flex;justify-content:flex-end;margin-top:auto}
 .c-share .share-btn{position:relative;z-index:2}
 /* Share button (ui.js shareButton) */
+/* follow Oxva: Telegram, X and the RSS feed (calls, status, home) */
+.follow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-top:14px;color:var(--mute);font-size:11.5px}
+.follow a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4)}
+.follow a:hover{color:var(--em-hi)}
 /* the $OXVA contract and its Copy button (home, Docs) */
 .tca{font-family:var(--f-mono);font-size:13px;color:var(--ink);overflow-wrap:anywhere}
 .tca-copy{margin-left:6px;vertical-align:middle;border:1px solid var(--gl-2);background:transparent;color:var(--ink-2);border-radius:999px;padding:3px 10px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}

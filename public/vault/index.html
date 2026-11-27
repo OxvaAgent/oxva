@@ -126,6 +126,9 @@
 .danger p{margin-top:8px;color:var(--ink-2);font-size:15px}
 .danger p b{color:var(--ink)}
 .danger label{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14.5px;color:var(--ink);cursor:pointer}
+.danger .onchain{padding-top:10px;border-top:1px solid rgba(226,113,95,.25)}
+.danger .onchain a{color:var(--em)}
+.danger .onchain code{font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere}
 .danger input{margin-top:3px;width:17px;height:17px;accent-color:var(--down);flex:none}
 .verify{display:inline-block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid var(--line-2);margin-left:10px;vertical-align:middle}
 .verify.ok{color:var(--up);border-color:var(--up)}.verify.bad{color:var(--down);border-color:var(--down)}.verify.old{color:var(--flat);border-color:var(--flat)}
@@ -165,14 +168,15 @@
       <div class="netpick">
         <nav class="nets" aria-label="Network"><a href="/vault/" id="net-test" class="on">Testnet</a><a href="/vault/?net=mainnet" id="net-main" class="main">Mainnet beta</a></nav>
         <span class="mono netnote" data-net="testnet">Free test ETH. Nothing real at stake.</span>
-        <span class="mono netnote" data-net="mainnet" hidden>Real ETH. Unaudited beta.</span>
+        <span class="mono netnote" data-net="mainnet" hidden>Real ETH. Beta, audit planned.</span>
       </div>
       <p class="warnbox" data-net="testnet"><span>⚠</span><span><b>Testnet.</b> This runs on Robinhood Chain testnet with free test ETH, so it is the place to try a vault first. Oxva never sees your keys: every action is signed in your own wallet.</span></p>
       <div class="danger" id="risk" data-net="mainnet" hidden>
-        <p class="tagline">Mainnet beta · real ETH · not audited</p>
-        <p>A vault here holds <b>real money</b> on Robinhood Chain. The contract passes our own tests, including hundreds of random actions checked against a model of its rules, but <b>no outside firm has audited it</b>. A bug could lose everything in it. There is <b>no balance limit</b>, and nobody, Oxva included, can recover funds or undo a transaction. Start with an amount you can afford to lose, and try it on testnet first.</p>
+        <p class="tagline">Mainnet beta · real ETH · independent audit planned</p>
+        <p>A vault here holds <b>real money</b> on Robinhood Chain. Security so far: the code is <b>open source and verified on-chain</b>, and passes 21 tests (including hundreds of random actions checked against a model of its rules) and an automated analysis. <b>An independent audit is planned and not done yet.</b> A bug could lose everything in it. There is <b>no balance limit</b>, and nobody, Oxva included, can recover funds or undo a transaction. Start with an amount you can afford to lose, and try it on testnet first.</p>
         <p>Oxva never sees your keys: every action is signed in your own wallet. The owner can always pause the agent and withdraw.</p>
-        <label for="ack"><input type="checkbox" id="ack"><span>I understand the risks: unaudited beta software, real money, no recovery. I accept them.</span></label>
+        <p class="onchain">Check the code on chain: Oxva's own vault <a href="https://robinhoodchain.blockscout.com/address/0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14?tab=contract" target="_blank" rel="noopener"><code>0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14</code> ↗</a> is verified on Blockscout and Sourcify (exact match with the published source). Every vault made here runs the same code; <a href="#source">source, tests and analysis</a>.</p>
+        <label for="ack"><input type="checkbox" id="ack"><span>I understand the risks: beta software not yet independently audited, real money, no recovery. I accept them.</span></label>
       </div>
 
       <div class="bar" id="bar">
@@ -296,13 +300,13 @@
       <h2 class="h2">Check it <em>yourself.</em></h2>
       <p class="lede">Every Oxva Vault runs the same contract. Its source and the exact compiler input are public, so you do not have to take this page's word for what a vault does.</p>
       <dl>
-        <dt>Contract</dt><dd>OxvaVault <span id="src-ver">1.1.0-beta</span>, unaudited</dd>
+        <dt>Contract</dt><dd>OxvaVault <span id="src-ver">1.1.0-beta</span>, independent audit planned</dd>
         <dt>Compiler</dt><dd id="src-compiler">solc 0.8.28, optimizer on (200 runs), EVM paris</dd>
         <dt>Source</dt><dd><a href="https://github.com/OxvaAgent/oxva/blob/main/contracts/contracts/OxvaVault.sol" target="_blank" rel="noopener">OxvaVault.sol on GitHub</a><a href="/assets/contracts/OxvaVault.sol">Same file on this site</a></dd>
         <dt>Compiler input</dt><dd><a href="/assets/contracts/OxvaVault.standard-input.json">Standard JSON input</a> (what an explorer needs to verify a vault)</dd>
         <dt>Runtime code hash</dt><dd><code id="src-hash">in OxvaVault.json</code> (keccak256, owner address masked)</dd>
         <dt>Tests and analysis</dt><dd><a href="https://github.com/OxvaAgent/oxva/tree/main/contracts/test" target="_blank" rel="noopener">Unit and fuzz tests</a><a href="https://github.com/OxvaAgent/oxva/blob/main/contracts/ANALYSIS.md" target="_blank" rel="noopener">Slither and Solhint results</a></dd>
-        <dt>Live example</dt><dd><a href="https://robinhoodchain.blockscout.com/address/0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14?tab=contract" target="_blank" rel="noopener">Oxva's own mainnet vault on Blockscout</a></dd>
+        <dt>Live example</dt><dd><a href="https://robinhoodchain.blockscout.com/address/0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14?tab=contract" target="_blank" rel="noopener"><code>0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14</code> on Blockscout</a><a href="https://repo.sourcify.dev/4663/0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14" target="_blank" rel="noopener">On Sourcify</a> Oxva's own mainnet vault, verified: exact match with the source above.</dd>
       </dl>
       <ol>
         <li>Open a vault on this page: the <b>Verified Oxva code</b> badge compares the code at that address with this build, in your browser.</li>
