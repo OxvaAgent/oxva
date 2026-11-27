@@ -492,4 +492,12 @@
   W.restore().then(function () { return refreshWallet(); }).catch(function () { /* wallet locked */ });
   var v = params.get('v');
   if (v) { $('o-addr').value = v; openVault(v); }
+
+  /* ---------- the published contract: version, compiler and code hash (made by contracts/scripts/export.js) ---------- */
+  fetch('/assets/contracts/OxvaVault.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
+    if (!c) return;
+    if ($('src-ver') && c.version) $('src-ver').textContent = c.version;
+    if ($('src-compiler') && c.compiler) $('src-compiler').textContent = 'solc ' + c.compiler.replace(/^v/, '') + ', optimizer ' + (c.optimizer && c.optimizer.enabled ? 'on (' + c.optimizer.runs + ' runs)' : 'off') + ', EVM ' + c.evmVersion;
+    if ($('src-hash') && c.runtimeCodeKeccak256OwnerMasked) $('src-hash').textContent = c.runtimeCodeKeccak256OwnerMasked;
+  }).catch(function () { /* the links still work */ });
 })();

@@ -19,6 +19,31 @@ window.OxvaVaultArtifact = ${JSON.stringify({ contractName: art.contractName, co
 fs.writeFileSync(path.join(root, "src", "assets", "vault-artifact.js"), out);
 console.log("wrote src/assets/vault-artifact.js (" + out.length + " bytes, bytecode " + (art.bytecode.length - 2) / 2 + " bytes)");
 
+// The source, published so anyone can check it (served at /assets/contracts/, linked from the Vault page):
+//   OxvaVault.sol                  the contract, as compiled
+//   OxvaVault.standard-input.json  the exact solc input of this build; explorers such as Blockscout verify from it
+//   OxvaVault.json                 compiler settings and the keccak256 of the runtime code with the owner masked
+const { keccak256 } = require(path.join(__dirname, "..", "node_modules", "ethers"));
+const pub = path.join(root, "src", "assets", "contracts");
+fs.mkdirSync(pub, { recursive: true });
+fs.writeFileSync(path.join(pub, "OxvaVault.sol"), sol);
+const dbg = require(path.join(__dirname, "..", "artifacts", "contracts", "OxvaVault.sol", "OxvaVault.dbg.json"));
+const info = require(path.join(__dirname, "..", "artifacts", "contracts", "OxvaVault.sol", dbg.buildInfo));
+fs.writeFileSync(path.join(pub, "OxvaVault.standard-input.json"), JSON.stringify(info.input, null, 1) + "\n");
+fs.writeFileSync(path.join(pub, "OxvaVault.json"), JSON.stringify({
+  contract: "OxvaVault", version, compiler: "v" + info.solcLongVersion,
+  optimizer: info.input.settings.optimizer, evmVersion: info.input.settings.evmVersion,
+  // the owner is an immutable, so every vault's runtime code carries its own owner address; with each occurrence
+  // of it replaced by zeros (32-byte words), the code hashes to this value
+  runtimeCodeKeccak256OwnerMasked: keccak256(art.deployedBytecode),
+  // the compiler hashes the exact source text into the code (metadata), line endings included: rebuild from the
+  // standard JSON input, which carries that text, rather than from a copy with other line endings
+  sourceLineEndings: info.input.sources["contracts/OxvaVault.sol"].content.includes("\r\n") ? "CRLF" : "LF",
+  source: "OxvaVault.sol", standardInput: "OxvaVault.standard-input.json",
+  repo: "https://github.com/OxvaAgent/oxva/blob/main/contracts/contracts/OxvaVault.sol"
+}, null, 2) + "\n");
+console.log("wrote src/assets/contracts/ (source, standard JSON input, settings; solc " + info.solcLongVersion + ")");
+
 const vendor = path.join(root, "src", "assets", "vendor");
 fs.mkdirSync(vendor, { recursive: true });
 const src = path.join(__dirname, "..", "node_modules", "ethers", "dist", "ethers.umd.min.js");

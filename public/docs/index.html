@@ -23,6 +23,7 @@
 <meta name="twitter:image" content="https://oxvaagent.com/assets/brand/og-image.png">
 <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="alternate" type="application/rss+xml" title="Oxva calls" href="/calls.xml">
 <title>Oxva Docs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,6 +45,8 @@
 .chap ul,.chap ol{margin:12px 0 0;padding-left:20px;display:grid;gap:6px}
 .chap b{color:var(--ink);font-weight:600}
 .chap a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4)}
+.chap pre{margin:14px 0 0;padding:14px 16px;border:1px solid var(--gl);border-radius:12px;background:rgba(0,0,0,.35);overflow-x:auto;font-family:var(--f-mono);font-size:13px;line-height:1.6;color:var(--ink-2)}
+.chap pre code{background:none;border:0;padding:0}
 .chap code{font-family:var(--f-mono);font-size:.92em;background:rgba(63,214,160,.07);border:1px solid var(--gl);border-radius:6px;padding:1px 6px;color:var(--ink);overflow-wrap:anywhere}
 .tbl{margin-top:16px;border:1px solid var(--gl);border-radius:14px;overflow:hidden}
 .tbl div{display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;padding:12px 16px;border-top:1px solid var(--line)}
@@ -101,6 +104,8 @@
         <a href="#chat">Chat</a>
         <a href="#token">$OXVA</a>
         <a href="#data">Data and chains</a>
+        <a href="#developers">For developers</a>
+        <a href="#trust">Status and terms</a>
       </nav>
 
       <div>
@@ -213,7 +218,7 @@
         <article class="chap" id="chat">
           <h2>Chat</h2>
           <p>On <a href="/chat/">Chat</a>, ask about any token or about Oxva’s calls. A Claude model from Anthropic answers from Oxva’s live data, and says so when the data is not there. Your messages pass through Oxva’s server to Anthropic’s API to get an answer; Oxva does not store them.</p>
-          <p>To keep it running for everyone, there is a limit on messages per visitor per hour and per day for the whole site.</p>
+          <p>To keep it running for everyone there are limits: by default 20 messages an hour per visitor, 40 answers a day for the whole site (it resets at 00:00 UTC), and 1,200 characters a message. The chat page shows how many answers are left today.</p>
         </article>
 
         <article class="chap" id="token">
@@ -234,6 +239,35 @@
           </div>
           <p>Calls and reads are automated views of public data. They can be wrong when the data is wrong or thin, and Oxva says so when a market is too thin to trade.</p>
         </article>
+
+        <article class="chap" id="developers">
+          <h2>For developers</h2>
+          <p>Oxva's calls and track record are public data, free to read from any website, app, bot or script. No key is needed and any origin may call it (CORS is open). Please cache: the data changes every four hours, and the API itself is cached for about two minutes.</p>
+          <h3>Calls and the record</h3>
+          <pre><code>GET https://oxvaagent.com/api/calls</code></pre>
+          <ul>
+            <li><code>record</code>: every call ever made, archived ones included: <code>total</code>, <code>graded</code>, <code>working</code>, <code>against</code>, <code>invalidated</code>, <code>waits</code>, <code>avoids</code>, <code>hitRate</code> (percent of graded buy and sell calls that are working).</li>
+            <li><code>latest</code>: the newest call on each token Oxva watches. <code>calls</code>: the newest 120 calls.</li>
+            <li>Each call: <code>sym</code>, <code>chain</code>, <code>address</code>, <code>action</code> (BUY, SELL, WAIT or AVOID), <code>conviction</code> (1 to 5), <code>price</code>, <code>entry</code> [low, high], <code>invalidation</code>, <code>reason</code>, <code>risk</code>, <code>status</code> (open, working, against, invalidated, watching), <code>final</code>, <code>at</code> (Unix ms) and <code>now</code> (the latest price, time and move in percent).</li>
+            <li><code>batches</code>: one row per four-hour slot, with missed slots marked; <code>updatedAt</code>, <code>nextCallAt</code>, <code>universe</code> (the tokens watched), <code>rules</code> (the numbers the rules use) and <code>archive</code> (the months archived).</li>
+          </ul>
+          <pre><code>const d = await fetch("https://oxvaagent.com/api/calls").then((r) =&gt; r.json());
+console.log(d.record.hitRate, d.latest.map((c) =&gt; c.sym + " " + c.action));</code></pre>
+          <h3>Archive</h3>
+          <pre><code>GET https://oxvaagent.com/api/calls?archive=2026-11</code></pre>
+          <p>Calls older than two weeks, one month at a time (<code>{ month, calls }</code>). The months that exist are listed in <code>archive</code>.</p>
+          <h3>Feed</h3>
+          <pre><code>GET https://oxvaagent.com/calls.xml</code></pre>
+          <p>An RSS feed of the newest 50 calls, for feed readers and bots: a new item whenever a batch runs.</p>
+          <h3>Fair use</h3>
+          <p>Read as often as you need, but keep it polite: once a minute is plenty. Fields may be added; the ones above stay. Calls are automated readings, not advice: if you show them to others, say so, and link back to Oxva. The <a href="/terms/">terms</a> apply. The site's code is public on <a href="https://github.com/OxvaAgent/oxva" target="_blank" rel="noopener">GitHub</a>.</p>
+        </article>
+
+        <article class="chap" id="trust">
+          <h2>Status and terms</h2>
+          <p><a href="/status/">Status</a> lists every batch of the last two weeks, when it ran and what it said, with missed batches marked, plus a changelog of the site. The <a href="/terms/">terms</a> say in plain words what Oxva is and is not, the risks of the vault, and what Oxva keeps about you (no accounts, no tracking).</p>
+          <p>The Oxva Vault contract source, the exact compiler input and how to check a vault yourself are on the <a href="/vault/#source">Vault page</a>.</p>
+        </article>
       </div>
     </div>
   </section>
@@ -250,13 +284,14 @@
         <p>Reads the market, makes the call, and guards every move an agent makes with your money.</p>
         <!-- Social links: when a link is ready, add href="https://…" target="_blank" rel="noopener" to its <a> and remove aria-disabled. -->
         <div class="socials">
-          <a class="soc" aria-disabled="true" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
+          <a class="soc" href="https://github.com/OxvaAgent/oxva" target="_blank" rel="noopener" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
           <a class="soc" aria-disabled="true" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span class="sr-only">X</span></a>
           <a class="soc" aria-disabled="true" title="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.94 3.32a1 1 0 0 0-1.03-.15L2.58 10.4a1 1 0 0 0 .06 1.88l4.55 1.5 1.75 5.43a1 1 0 0 0 1.66.42l2.53-2.47 4.47 3.29a1 1 0 0 0 1.57-.6l3.1-15.3a1 1 0 0 0-.33-1.03ZM9.9 14.37l-.73 3.07-1.04-3.23 9.07-6.53Z"/></svg><span class="sr-only">Telegram</span></a>
         </div>
       </div>
       <div><h5 class="mono">Use</h5><a href="/chat/">Chat with Oxva</a><a href="/calls/">Calls &amp; track record</a><a href="/markets/">Markets</a><a href="/read/">Read a token</a><a href="/docs/">Docs</a></div>
       <div><h5 class="mono">The wall</h5><a href="/vault/">Create a vault</a><a href="/wall/">Try the wall</a><a href="/wall/#pipeline">How a transaction is checked</a><a href="/wall/#security">Security model</a><a href="/#token">$OXVA</a></div>
+      <div><h5 class="mono">Trust</h5><a href="/status/">Status &amp; changelog</a><a href="/vault/#source">Contract source</a><a href="/docs/#developers">Developer API</a><a href="/calls.xml">RSS feed</a><a href="/terms/">Terms</a></div>
     </div>
     <div class="legal mono"><span>© 2026 Oxva</span><span>Calls and reads are automated views of public data, not financial advice.</span></div>
   </div>

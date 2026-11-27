@@ -23,6 +23,7 @@
 <meta name="twitter:image" content="https://oxvaagent.com/assets/brand/og-image.png">
 <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="alternate" type="application/rss+xml" title="Oxva calls" href="/calls.xml">
 <title>Oxva Vault</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +31,16 @@
 <link rel="stylesheet" href="/assets/site.css">
 <style>
 /* Vault: wallet bar, then create / open, then the vault itself: state, rules, agent, owner, history. */
+/* the contract, published: source, compiler input, how to check (vault.js fills version and hash from /assets/contracts/OxvaVault.json) */
+.src{border-top:1px solid var(--line);padding-top:34px;margin-top:10px}
+.src dl{display:grid;grid-template-columns:200px minmax(0,1fr);gap:10px 22px;margin:20px 0 0}
+.src dt{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding-top:3px}
+.src dd{margin:0;color:var(--ink-2);overflow-wrap:anywhere}
+.src dd a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4);margin-right:14px}
+.src code{font-family:var(--f-mono);font-size:12.5px}
+.src ol{margin:16px 0 0;padding-left:20px;color:var(--ink-2)}
+.src li{margin-top:8px}
+@media (max-width:640px){.src dl{grid-template-columns:minmax(0,1fr);gap:4px}.src dd{margin-bottom:10px}}
 .warnbox{display:flex;gap:12px;align-items:flex-start;margin-top:24px;padding:14px 16px;border-left:2px solid var(--flat);background:rgba(147,104,26,.07);color:var(--ink-2);font-size:15px;max-width:780px}
 .warnbox b{color:var(--ink)}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:30px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
@@ -277,6 +288,28 @@
       </section>
     </div>
   </section>
+
+  <section class="sec" id="source">
+    <div class="wrap src">
+      <span class="mono kicker">The contract</span>
+      <h2 class="h2">Check it <em>yourself.</em></h2>
+      <p class="lede">Every Oxva Vault runs the same contract. Its source and the exact compiler input are public, so you do not have to take this page's word for what a vault does.</p>
+      <dl>
+        <dt>Contract</dt><dd>OxvaVault <span id="src-ver">1.1.0-beta</span>, unaudited</dd>
+        <dt>Compiler</dt><dd id="src-compiler">solc 0.8.28, optimizer on (200 runs), EVM paris</dd>
+        <dt>Source</dt><dd><a href="https://github.com/OxvaAgent/oxva/blob/main/contracts/contracts/OxvaVault.sol" target="_blank" rel="noopener">OxvaVault.sol on GitHub</a><a href="/assets/contracts/OxvaVault.sol">Same file on this site</a></dd>
+        <dt>Compiler input</dt><dd><a href="/assets/contracts/OxvaVault.standard-input.json">Standard JSON input</a> (what an explorer needs to verify a vault)</dd>
+        <dt>Runtime code hash</dt><dd><code id="src-hash">in OxvaVault.json</code> (keccak256, owner address masked)</dd>
+        <dt>Tests and analysis</dt><dd><a href="https://github.com/OxvaAgent/oxva/tree/main/contracts/test" target="_blank" rel="noopener">Unit and fuzz tests</a><a href="https://github.com/OxvaAgent/oxva/blob/main/contracts/ANALYSIS.md" target="_blank" rel="noopener">Slither and Solhint results</a></dd>
+        <dt>Live example</dt><dd><a href="https://robinhoodchain.blockscout.com/address/0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14?tab=contract" target="_blank" rel="noopener">Oxva's own mainnet vault on Blockscout</a></dd>
+      </dl>
+      <ol>
+        <li>Open a vault on this page: the <b>Verified Oxva code</b> badge compares the code at that address with this build, in your browser.</li>
+        <li>Or check by hand: read the vault's code from the chain, replace each 32-byte word holding its owner address with zeros, and hash it. It matches the hash above only if the vault runs this exact contract.</li>
+        <li>Or rebuild it: compile the standard JSON input with solc 0.8.28 and compare the runtime bytecode with the chain.</li>
+      </ol>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -290,13 +323,14 @@
         <p>Reads the market, makes the call, and guards every move an agent makes with your money.</p>
         <!-- Social links: when a link is ready, add href="https://…" target="_blank" rel="noopener" to its <a> and remove aria-disabled. -->
         <div class="socials">
-          <a class="soc" aria-disabled="true" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
+          <a class="soc" href="https://github.com/OxvaAgent/oxva" target="_blank" rel="noopener" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
           <a class="soc" aria-disabled="true" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span class="sr-only">X</span></a>
           <a class="soc" aria-disabled="true" title="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.94 3.32a1 1 0 0 0-1.03-.15L2.58 10.4a1 1 0 0 0 .06 1.88l4.55 1.5 1.75 5.43a1 1 0 0 0 1.66.42l2.53-2.47 4.47 3.29a1 1 0 0 0 1.57-.6l3.1-15.3a1 1 0 0 0-.33-1.03ZM9.9 14.37l-.73 3.07-1.04-3.23 9.07-6.53Z"/></svg><span class="sr-only">Telegram</span></a>
         </div>
       </div>
       <div><h5 class="mono">Use</h5><a href="/chat/">Chat with Oxva</a><a href="/calls/">Calls &amp; track record</a><a href="/markets/">Markets</a><a href="/read/">Read a token</a><a href="/docs/">Docs</a></div>
       <div><h5 class="mono">The wall</h5><a href="/vault/">Create a vault</a><a href="/wall/">Try the wall</a><a href="/wall/#pipeline">How a transaction is checked</a><a href="/wall/#security">Security model</a><a href="/#token">$OXVA</a></div>
+      <div><h5 class="mono">Trust</h5><a href="/status/">Status &amp; changelog</a><a href="/vault/#source">Contract source</a><a href="/docs/#developers">Developer API</a><a href="/calls.xml">RSS feed</a><a href="/terms/">Terms</a></div>
     </div>
     <div class="legal mono"><span>© 2026 Oxva</span><span>Calls and reads are automated views of public data, not financial advice.</span></div>
   </div>

@@ -1,0 +1,103 @@
+<title>Oxva Terms</title>
+<meta name="description" content="The terms for using Oxva in plain words: not financial advice, the risks of the Oxva Vault, what the chat sends where, and what Oxva keeps about you.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Terms: one readable column of short sections. */
+.terms{max-width:760px;padding-bottom:90px}
+.terms section{padding:26px 0;border-top:1px solid var(--line)}
+.terms h2{font-family:var(--f-display);font-weight:400;font-size:26px;line-height:1.2}
+.terms p,.terms li{color:var(--ink-2);margin-top:10px}
+.terms ul{margin:6px 0 0;padding-left:20px}
+.terms .warn{border:1px solid rgba(226,113,95,.45);background:rgba(226,113,95,.06);border-radius:12px;padding:12px 14px;color:var(--ink)}
+.terms code{font-family:var(--f-mono);font-size:13px;overflow-wrap:anywhere}
+.updated{color:var(--mute);margin-top:14px}
+.terms a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4)}
+</style>
+
+<!-- @nav -->
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <span class="mono kicker">Oxva terms</span>
+      <h1 class="h1">The terms, in <em>plain words.</em></h1>
+      <p class="lede">By using this site you agree to what is written here. If you do not agree, please do not use it.</p>
+      <p class="mono updated">Last updated 27 Nov 2026</p>
+    </div>
+  </section>
+
+  <div class="wrap terms">
+    <section>
+      <h2>1. What Oxva is</h2>
+      <p>Oxva is a website with automated tools: calls on tokens every four hours, market and contract reads, a chat, a demo of a policy wall for trading agents, and the Oxva Vault, a smart contract you can deploy yourself on Robinhood Chain. It is an early, experimental project.</p>
+    </section>
+
+    <section>
+      <h2>2. Not financial advice</h2>
+      <p>Calls, reads, chat answers and everything else on this site are automated readings of public data made by fixed rules and an AI model. They are not financial, investment, legal or tax advice, and not an offer to buy or sell anything. They can be wrong, late or based on wrong data. Crypto and tokenized assets are risky and can lose all their value. Decide for yourself, and only risk what you can afford to lose.</p>
+      <p>The track record shows past calls. Past results do not predict future ones.</p>
+    </section>
+
+    <section>
+      <h2>3. Data from others</h2>
+      <p>Prices, pools and contract checks come from third parties: DexScreener, GoPlus Security, Honeypot.is and the Robinhood Chain nodes. Oxva does not control them and cannot promise they are right or available.</p>
+    </section>
+
+    <section>
+      <h2>4. The Oxva Vault</h2>
+      <p>The vault is a smart contract that you deploy and fund with your own wallet. Oxva never holds your keys or your funds and cannot move, freeze or recover them.</p>
+      <ul>
+        <li><b>Testnet</b> uses free test ETH with no real value.</li>
+        <li><b>Mainnet</b> holds real ETH and is an <b>unaudited beta</b>. The code passes Oxva's own tests and automated analysis, but no outside firm has audited it. A bug, a mistake in your rules or a compromised agent key could lose some or all of the funds, and nobody can get them back.</li>
+      </ul>
+      <p class="warn">Only put into a mainnet vault what you can afford to lose. You are responsible for your wallet, your keys, the rules you set and every transaction you or your agent sign.</p>
+      <p>The contract source is public: <a href="https://github.com/OxvaAgent/oxva/blob/main/contracts/contracts/OxvaVault.sol" target="_blank" rel="noopener">OxvaVault.sol on GitHub</a>, also served on this site with how to check it yourself on the <a href="/vault/#source">Vault page</a>.</p>
+    </section>
+
+    <section>
+      <h2>5. The chat</h2>
+      <p>Answers are written by a Claude model from Anthropic, given Oxva's live data. They can be wrong. Your messages go through Oxva's server and Netlify's AI Gateway to Anthropic's API to get an answer. Oxva does not store your messages; Anthropic handles them under its own terms. Your browser keeps the conversation for this tab only. Do not send private keys, seed phrases or personal data in the chat.</p>
+      <p>The chat is free to use. It has limits per visitor per hour and for the whole site per day so it keeps running for everyone; the chat page shows them.</p>
+    </section>
+
+    <section>
+      <h2>6. $OXVA</h2>
+      <!-- @token:soon -->
+      <p>No $OXVA token has launched and no contract exists. Anyone offering $OXVA today is not Oxva. If it ever launches, the official contract will be announced on this site first.</p>
+      <!-- @token:live -->
+      <p>The only official $OXVA contract is <code>{{TOKEN_CA}}</code> on Robinhood Chain. Oxva does not make calls on its own token, and nothing on this site is an offer or a recommendation to buy it. Any other contract using the name is not Oxva.</p>
+      <!-- @token:end -->
+    </section>
+
+    <section>
+      <h2>7. What Oxva keeps about you</h2>
+      <ul>
+        <li>No accounts, no sign-up, no ads and no tracking cookies.</li>
+        <li>To enforce the chat limits, a counter per hour and per day, keyed by a one-way hash of your IP address, not the address itself.</li>
+        <li>In your own browser only: tokens you read recently, vaults you opened, and the chat of the current tab.</li>
+        <li>Netlify, which hosts the site, keeps standard request logs under its own policy. WalletConnect (Reown) relays the connection when you log in with a phone wallet by QR code.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>8. No warranty</h2>
+      <p>The site, the calls, the API and the contract are provided as they are, without any warranty, and may change, break or stop at any time. To the fullest extent the law allows, Oxva is not liable for any loss that comes from using them, including lost funds, trades or profits.</p>
+    </section>
+
+    <section>
+      <h2>9. Changes and contact</h2>
+      <p>These terms can change; the date at the top shows the last change, and the <a href="/status/#changes">changelog</a> lists changes to the site. Questions or problems: open an issue on <a href="https://github.com/OxvaAgent/oxva/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+    </section>
+  </div>
+</main>
+
+<!-- @footer -->
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>

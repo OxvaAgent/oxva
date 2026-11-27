@@ -147,6 +147,33 @@ const tests = {
       assert.ok(doc.errors.length);
     });
   },
+  'batches list each slot newest first and show a skipped slot as missed'() {
+    const s0 = C.slotOf(NOW);
+    const step = C.RULES.slotHours * H;
+    const c1 = callOn(W, bullish, s0 + 5 * 60e3), c2 = callOn(W2, data, s0 + 6 * 60e3);   // slot 0: a BUY and a WAIT
+    const c3 = callOn(W, data, s0 + 2 * step + 5 * 60e3);                                   // slot 2 (slot 1 skipped)
+    const b = C.batches([c3, c2, c1], s0 + 2 * step + H);
+    assert.deepStrictEqual(b.map((x) => x.slot), [s0 + 2 * step, s0 + step, s0]);
+    assert.strictEqual(b[1].missed, true);
+    assert.strictEqual(b[2].calls, 2);
+    assert.strictEqual(b[2].BUY, 1);
+    assert.strictEqual(b[2].WAIT, 1);
+    assert.strictEqual(b[2].at, c1.at, 'a batch is timed by its first call');
+  },
+  'the current slot is not called missed while its batch may still be running'() {
+    const s0 = C.slotOf(NOW), step = C.RULES.slotHours * H;
+    const c = callOn(W, data, s0 + 5 * 60e3);
+    assert.deepStrictEqual(C.batches([c], s0 + step + 10 * 60e3).map((x) => x.slot), [s0], '10 minutes into the next slot: not missed yet');
+    assert.strictEqual(C.batches([c], s0 + step + 40 * 60e3)[0].missed, true, '40 minutes in: missed');
+    assert.deepStrictEqual(C.batches([], NOW), []);
+  },
+  'view gives the oldest live call, the batches and the last run errors'() {
+    const a = callOn(W, data, NOW), b = callOn(W2, data, NOW + 4 * H);
+    const v = C.view({ calls: [b, a], slot: C.slotOf(NOW + 4 * H), updatedAt: NOW + 4 * H, errors: ['PEPE: HTTP 429'] }, NOW + 4 * H + 60e3);
+    assert.strictEqual(v.oldestLiveAt, a.at);
+    assert.strictEqual(v.batches.length, 2);
+    assert.deepStrictEqual(v.lastRunErrors, ['PEPE: HTTP 429']);
+  },
   'view returns the latest call per watched token and the next call time'() {
     const a = callOn(W, bullish, NOW), b = callOn(W, data, NOW + 4 * H);
     const v = C.view({ calls: [b, a], slot: C.slotOf(NOW + 4 * H), updatedAt: NOW }, NOW + 4 * H);

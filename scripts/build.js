@@ -23,6 +23,8 @@ const PAGES = [
   { key: 'vault', src: 'vault.html', out: path.join('vault', 'index.html'), ogTitle: 'Oxva Vault: put your agent’s money behind the wall' },
   { key: 'read', src: 'read.html', out: path.join('read', 'index.html'), ogTitle: 'Oxva Read: read a token, then decide' },
   { key: 'docs', src: 'docs.html', out: path.join('docs', 'index.html'), ogTitle: 'Oxva Docs: how Oxva works' },
+  { key: 'status', src: 'status.html', out: path.join('status', 'index.html'), ogTitle: 'Oxva Status: every batch of calls, on the record' },
+  { key: 'terms', src: 'terms.html', out: path.join('terms', 'index.html'), ogTitle: 'Oxva Terms, in plain words' },
   // Netlify serves public/404.html for any address that does not exist; kept out of search and the sitemap
   { key: 'notfound', src: '404.html', out: '404.html', ogTitle: 'Oxva: page not found', noindex: true }
 ];
@@ -98,6 +100,7 @@ ${seo}
 <meta name="twitter:image" content="${OG_IMAGE}">
 <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="alternate" type="application/rss+xml" title="Oxva calls" href="/calls.xml">
 ${head}
 </head>
 <body data-page="${page.key}">

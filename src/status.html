@@ -1,0 +1,83 @@
+<title>Oxva Status</title>
+<meta name="description" content="Is Oxva awake? Every batch of calls of the last two weeks, when it ran and what it said, plus what changed on the site.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Status: the batch log (filled in the HTML by netlify/edge-functions/live.js, kept fresh by status.js) and the changelog. */
+.st-sum{margin-top:26px;font-size:17px;color:var(--ink-2)}
+.st-sum b{font-weight:500}
+.st-wrap{margin-top:22px;border:1px solid var(--gl);border-radius:18px;overflow:hidden;background:var(--glass)}
+.st-table{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums}
+.st-table th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:500;text-align:left;padding:12px 16px;border-bottom:1px solid var(--gl)}
+.st-table td{padding:10px 16px;border-bottom:1px solid var(--line)}
+.st-table tr:last-child td{border-bottom:0}
+.st-table .r{text-align:right}
+.st-table tr.missed td{background:rgba(226,113,95,.06)}
+.st-scroll{max-height:560px;overflow:auto}
+.st-note{margin-top:12px;color:var(--mute);font-size:14px}
+.st-links{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px}
+.st-links a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4)}
+.log{list-style:none;margin:22px 0 0;padding:0;border-top:1px solid var(--gl)}
+.log li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 18px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.log time{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding-top:3px}
+.log p{color:var(--ink-2)}
+@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}.st-table th,.st-table td{padding:9px 10px}}
+</style>
+
+<!-- @nav -->
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <span class="mono kicker">Oxva status</span>
+      <h1 class="h1">Is Oxva <em>awake?</em></h1>
+      <p class="lede">Oxva makes a batch of calls every four hours, a few minutes after 00:00, 04:00, 08:00, 12:00, 16:00 and 20:00 UTC. This page lists every batch of the last two weeks straight from the calls API, so a skipped batch shows here instead of going unnoticed.</p>
+      <p class="st-sum" id="st-sum"><!--live:status-summary-->Reading the latest batch…<!--/live:status-summary--></p>
+      <div class="st-wrap">
+        <div class="st-scroll">
+          <table class="st-table">
+            <thead><tr><th>Batch (UTC)</th><th class="r">Calls</th><th class="r">Buy</th><th class="r">Sell</th><th class="r">Wait</th><th class="r">Avoid</th></tr></thead>
+            <tbody id="st-rows"><!--live:status-rows--><tr><td colspan="6" class="muted">Loading the batches…</td></tr><!--/live:status-rows--></tbody>
+          </table>
+        </div>
+      </div>
+      <p class="st-note" id="st-errors"><!--live:status-errors--><!--/live:status-errors--></p>
+      <p class="st-note">Fewer calls than tokens in a batch is normal: while a buy or sell on a token is still being graded, the same call is not made again every four hours.</p>
+      <div class="st-links mono">
+        <a href="/api/calls">The raw data (JSON)</a>
+        <a href="/calls.xml">RSS feed of new calls</a>
+        <a href="/calls/#record">The track record</a>
+        <a href="/docs/#developers">For developers</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="changes">
+    <div class="wrap">
+      <span class="mono kicker">Changelog</span>
+      <h2 class="h2">What <em>changed.</em></h2>
+      <ul class="log">
+        <li><time datetime="2026-11-27">27 Nov 2026</time><p>This status page, an RSS feed of new calls, a public calls API for developers, the vault contract source published for anyone to check, and plain-language terms.</p></li>
+        <li><time datetime="2026-11-27">27 Nov 2026</time><p>Oxva moved to oxvaagent.com. The old address forwards every link.</p></li>
+        <li><time datetime="2026-11-27">27 Nov 2026</time><p>Calls older than two weeks move to a monthly archive instead of being deleted, and the record keeps counting them.</p></li>
+        <li><time datetime="2026-11-27">27 Nov 2026</time><p>Home shows proof first: the newest graded call, the record and a picture of it. The vault got its own section.</p></li>
+        <li><time datetime="2026-11-26">26 Nov 2026</time><p>Calls: one live call per token, a 3% minimum distance to the invalidation price, and no chasing of very large moves.</p></li>
+        <li><time datetime="2026-11-26">26 Nov 2026</time><p>Share buttons, a share picture for links, Markets as cards on phones, a 404 page, robots.txt and a sitemap.</p></li>
+        <li><time datetime="2026-11-23">23 Nov 2026</time><p>Robinhood stock tokens are judged by stock-sized moves. Docs page added.</p></li>
+        <li><time datetime="2026-11-22">22 Nov 2026</time><p>A live Oxva Vault on Robinhood Chain mainnet (unaudited beta), and wallet login by QR code.</p></li>
+        <li><time datetime="2026-11-21">21 Nov 2026</time><p>First calls, the wall and the Oxva Vault on Robinhood Chain testnet.</p></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<!-- @footer -->
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>
+<script src="/assets/status.js"></script>

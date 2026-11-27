@@ -1,0 +1,15 @@
+{
+  "contract": "OxvaVault",
+  "version": "1.1.0-beta",
+  "compiler": "v0.8.28+commit.7893614a",
+  "optimizer": {
+    "enabled": true,
+    "runs": 200
+  },
+  "evmVersion": "paris",
+  "runtimeCodeKeccak256OwnerMasked": "0x763055a3f6054ab9f9c9bc1cff9ec669a06e893331ba93db66198974c49675c8",
+  "sourceLineEndings": "CRLF",
+  "source": "OxvaVault.sol",
+  "standardInput": "OxvaVault.standard-input.json",
+  "repo": "https://github.com/OxvaAgent/oxva/blob/main/contracts/contracts/OxvaVault.sol"
+}

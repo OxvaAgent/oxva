@@ -18,15 +18,19 @@
     $('r-rate').textContent = r.hitRate == null ? 'Hit rate: not enough graded calls yet' : 'Hit rate ' + r.hitRate + '%';
     $('r-next').textContent = 'Next batch in ' + U.until(d.nextCallAt);
     Array.prototype.forEach.call(document.querySelectorAll('[data-rule]'), function (s) { var k = s.getAttribute('data-rule'); if (d.rules && d.rules[k] != null) s.textContent = d.rules[k]; });
-    renderArchive(d.archive || []);
+    renderArchive(d.archive || [], d.oldestLiveAt ? d.oldestLiveAt + ((d.rules && d.rules.keepDays) || 14) * 864e5 : null);
   }
 
   // calls older than two weeks: one link per month to the archived calls (JSON from /api/calls?archive=YYYY-MM)
-  function renderArchive(months) {
+  function renderArchive(months, firstAt) {
     var p = $('archive'); if (!p) return;
     p.textContent = '';
     var valid = months.filter(function (m) { return /^\d{4}-\d{2}$/.test(m); });
-    if (!valid.length) { p.textContent = 'Calls stay here for two weeks, then move to a monthly archive. None archived yet.'; return; }
+    if (!valid.length) {
+      var first = firstAt ? ' (the first on ' + new Date(firstAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) + ')' : '';
+      p.textContent = 'Calls stay here for two weeks, then move to a monthly archive' + first + '. None archived yet.';
+      return;
+    }
     p.appendChild(document.createTextNode('Older calls, by month:'));
     valid.slice().reverse().forEach(function (m) {
       var label = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1, 1)).toLocaleString('en', { month: 'short', year: 'numeric', timeZone: 'UTC' });

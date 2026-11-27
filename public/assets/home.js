@@ -58,7 +58,7 @@
     $('latest-time').textContent = d.updatedAt ? 'Graded ' + U.ago(d.updatedAt, now) + ' · next call in ' + U.until(d.nextCallAt, now) : '';
 
     var newest = d.calls.length ? d.calls[0].at : null;
-    $('status-last').textContent = newest ? 'Last call ' + U.ago(newest, now) + ' · next call in ' + U.until(d.nextCallAt, now) : 'Making its first calls';
+    $('status-last').textContent = newest ? 'Last batch ran ' + U.ago(newest, now) + ' · next in ' + U.until(d.nextCallAt, now) : 'Making its first calls';
     // proof above the fold: the newest buy or sell call that has a grade, whatever the grade is (no picking winners)
     var GRADED = { working: 'Working', against: 'Against', invalidated: 'Invalidated' };
     var proof = d.calls.filter(function (c) { return (c.action === 'BUY' || c.action === 'SELL') && GRADED[c.status]; })

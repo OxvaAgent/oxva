@@ -1,4 +1,5 @@
 // POST /api/chat: talk to Oxva. Streams plain text back.
+// GET /api/chat: the limits below and how many answers are left today (the chat page shows them up front).
 //
 // Settings (Netlify > Site configuration > Environment variables):
 //   ANTHROPIC_API_KEY      your own Anthropic key (billed by Anthropic). If you do not set one, Netlify's
@@ -47,6 +48,18 @@ How to answer:
 - Reply in the user's language. Keep it short: a few plain sentences or short paragraphs, no headings, no tables, no markdown.`;
 
 const ADDRESS = /0x[0-9a-fA-F]{40}/;
+
+// The limits, and the answers left today for the whole site (the day counter that overLimit() keeps).
+async function chatLimits() {
+  const day = new Date().toISOString().slice(0, 10);
+  let used = 0;
+  try { used = (await getStore({ name: "oxva-chat", consistency: "strong" }).get(`day/${day}`, { type: "json" })) || 0; } catch (e) { /* show the limits anyway */ }
+  return Response.json({
+    perHour: PER_HOUR, perDay: PER_DAY, maxChars: MAX_USER_CHARS,
+    usedToday: used, leftToday: Math.max(0, PER_DAY - used),
+    resetsAt: new Date(Date.parse(day + "T00:00:00Z") + 864e5).toISOString()
+  }, { headers: { "cache-control": "no-store" } });
+}
 
 function bad(status, message) {
   return Response.json({ error: message }, { status });
@@ -102,7 +115,8 @@ async function callsContext(context) {
 }
 
 export default async (req, context) => {
-  if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: { allow: "POST" } });
+  if (req.method === "GET") return chatLimits();
+  if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: { allow: "GET, POST" } });
   if (!process.env.ANTHROPIC_API_KEY) return bad(503, "Chat is not switched on yet. The site owner still needs to add an API key.");
 
   let body;

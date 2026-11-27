@@ -11,6 +11,9 @@
 .side{position:sticky;top:96px}
 .side .h1{font-size:clamp(46px,6vw,84px)}
 .side .lede{font-size:16.5px}
+/* the limits, said up front (chat.js fills in what is left today) */
+.limits{margin-top:14px;padding:9px 12px;border:1px solid var(--gl);border-radius:10px;color:var(--ink-2);font-size:11px;line-height:1.6}
+.limits b{color:var(--em);font-weight:500}
 .side h3{margin-top:26px;color:var(--mute)}
 .sugs{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:10px}
 .sug{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:7px 14px;font-size:14px;color:var(--ink-2);text-align:left;transition:all .2s}
@@ -50,6 +53,7 @@
       <span class="mono kicker">Oxva chat · live data</span>
       <h1 class="h1">Ask <em>Oxva.</em></h1>
       <p class="lede">Ask about a token, a call, or why the wall would stop a transaction. Paste a contract address and Oxva reads it live before answering.</p>
+      <p class="limits mono" id="limits">Free, with limits: 20 messages an hour per visitor, 40 answers a day for the whole site, 1,200 characters a message.</p>
       <h3 class="mono">Try</h3>
       <div class="sugs" id="sugs">
         <button class="sug" type="button">What are your calls right now?</button>
@@ -62,7 +66,7 @@
         <input id="tok" type="text" placeholder="0x… contract address" autocomplete="off" spellcheck="false" maxlength="64" aria-label="Token contract address">
         <select id="tok-chain" aria-label="Chain"><option value="auto">Auto</option><option value="robinhood">Robinhood Chain</option><option value="ethereum">Ethereum</option><option value="bsc">BNB Chain</option><option value="base">Base</option><option value="arbitrum">Arbitrum</option><option value="polygon">Polygon</option></select>
       </div>
-      <p class="fine">Answers come from a Claude model by Anthropic, given Oxva's live data. Messages go through Oxva's server on Netlify to Anthropic to get an answer and are not stored by Oxva. Not financial advice. There is a limit on messages per hour.</p>
+      <p class="fine">Answers come from a Claude model by Anthropic, given Oxva's live data. Messages go through Oxva's server on Netlify to Anthropic to get an answer and are not stored by Oxva. Not financial advice. The chat is free for everyone; the daily limit keeps it running and resets at 00:00 UTC.</p>
     </aside>
 
     <section class="convo" aria-label="Conversation">

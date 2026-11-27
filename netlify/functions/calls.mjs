@@ -16,7 +16,8 @@ export default async (req, context) => {
       return Response.json(a || { month, calls: [] }, {
         headers: {
           "cache-control": "public, max-age=300",
-          "netlify-cdn-cache-control": "public, s-maxage=600, stale-while-revalidate=3600"
+          "netlify-cdn-cache-control": "public, s-maxage=600, stale-while-revalidate=3600",
+          "access-control-allow-origin": "*"
         }
       });
     }
@@ -24,7 +25,9 @@ export default async (req, context) => {
     return Response.json(view(doc), {
       headers: {
         "cache-control": "public, max-age=60",
-        "netlify-cdn-cache-control": "public, s-maxage=120, stale-while-revalidate=300"
+        "netlify-cdn-cache-control": "public, s-maxage=120, stale-while-revalidate=300",
+        // public, read-only data: any website or app may read it (docs: /docs/#developers)
+        "access-control-allow-origin": "*"
       }
     });
   } catch (e) {

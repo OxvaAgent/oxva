@@ -3,7 +3,7 @@
   "private": true,
   "description": "Oxva: reads the market, makes the call, guards every move.",
   "scripts": {
-    "test": "node scripts/test-gate.js && node scripts/test-read.js && node scripts/test-calls.js && node scripts/test-wall.js && node scripts/test-rpc.mjs && node scripts/test-token.js",
+    "test": "node scripts/test-gate.js && node scripts/test-read.js && node scripts/test-calls.js && node scripts/test-wall.js && node scripts/test-rpc.mjs && node scripts/test-token.js && node scripts/test-live.mjs",
     "build": "node scripts/build.js"
   },
   "dependencies": {

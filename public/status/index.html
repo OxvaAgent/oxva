@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Is Oxva awake? Every batch of calls of the last two weeks, when it ran and what it said, plus what changed on the site.">
+<meta name="theme-color" content="#060807">
+<link rel="canonical" href="https://oxvaagent.com/status/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oxva">
+<meta property="og:url" content="https://oxvaagent.com/status/">
+<meta property="og:title" content="Oxva Status: every batch of calls, on the record">
+<meta property="og:description" content="Is Oxva awake? Every batch of calls of the last two weeks, when it ran and what it said, plus what changed on the site.">
+<meta property="og:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:secure_url" content="https://oxvaagent.com/assets/brand/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Oxva: reads the market, guards every move. Robinhood Chain onchain agent.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oxva Status: every batch of calls, on the record">
+<meta name="twitter:description" content="Is Oxva awake? Every batch of calls of the last two weeks, when it ran and what it said, plus what changed on the site.">
+<meta name="twitter:image" content="https://oxvaagent.com/assets/brand/og-image.png">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="alternate" type="application/rss+xml" title="Oxva calls" href="/calls.xml">
+<title>Oxva Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Status: the batch log (filled in the HTML by netlify/edge-functions/live.js, kept fresh by status.js) and the changelog. */
+.st-sum{margin-top:26px;font-size:17px;color:var(--ink-2)}
+.st-sum b{font-weight:500}
+.st-wrap{margin-top:22px;border:1px solid var(--gl);border-radius:18px;overflow:hidden;background:var(--glass)}
+.st-table{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums}
+.st-table th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:500;text-align:left;padding:12px 16px;border-bottom:1px solid var(--gl)}
+.st-table td{padding:10px 16px;border-bottom:1px solid var(--line)}
+.st-table tr:last-child td{border-bottom:0}
+.st-table .r{text-align:right}
+.st-table tr.missed td{background:rgba(226,113,95,.06)}
+.st-scroll{max-height:560px;overflow:auto}
+.st-note{margin-top:12px;color:var(--mute);font-size:14px}
+.st-links{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px}
+.st-links a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4)}
+.log{list-style:none;margin:22px 0 0;padding:0;border-top:1px solid var(--gl)}
+.log li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 18px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.log time{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding-top:3px}
+.log p{color:var(--ink-2)}
+@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}.st-table th,.st-table td{padding:9px 10px}}
+</style>
+</head>
+<body data-page="status">
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="Oxva home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      OXVA
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="/#token" class="nav-token">$OXVA</a>
+      <a href="/calls/" data-nav="calls">Calls</a>
+      <a href="/markets/" data-nav="markets">Markets</a>
+      <a href="/chat/" data-nav="chat">Chat</a>
+      <a href="/wall/" data-nav="wall">The wall</a>
+      <a href="/vault/" data-nav="vault">Vault</a>
+      <a href="/read/" data-nav="read">Read a token</a>
+      <a href="/docs/" data-nav="docs">Docs</a>
+    </nav>
+    <button class="btn btn-line nav-wallet" type="button" id="nav-wallet" hidden>Connect wallet</button>
+    <a class="btn btn-ink nav-ask" href="/chat/">Ask Oxva <span class="arr">→</span></a>
+  </div>
+</header>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <span class="mono kicker">Oxva status</span>
+      <h1 class="h1">Is Oxva <em>awake?</em></h1>
+      <p class="lede">Oxva makes a batch of calls every four hours, a few minutes after 00:00, 04:00, 08:00, 12:00, 16:00 and 20:00 UTC. This page lists every batch of the last two weeks straight from the calls API, so a skipped batch shows here instead of going unnoticed.</p>
+      <p class="st-sum" id="st-sum"><!--live:status-summary-->Reading the latest batch…<!--/live:status-summary--></p>
+      <div class="st-wrap">
+        <div class="st-scroll">
+          <table class="st-table">
+            <thead><tr><th>Batch (UTC)</th><th class="r">Calls</th><th class="r">Buy</th><th class="r">Sell</th><th class="r">Wait</th><th class="r">Avoid</th></tr></thead>
+            <tbody id="st-rows"><!--live:status-rows--><tr><td colspan="6" class="muted">Loading the batches…</td></tr><!--/live:status-rows--></tbody>
+          </table>
+        </div>
+      </div>
+      <p class="st-note" id="st-errors"><!--live:status-errors--><!--/live:status-errors--></p>
+      <p class="st-note">Fewer calls than tokens in a batch is normal: while a buy or sell on a token is still being graded, the same call is not made again every four hours.</p>
+      <div class="st-links mono">
+        <a href="/api/calls">The raw data (JSON)</a>
+        <a href="/calls.xml">RSS feed of new calls</a>
+        <a href="/calls/#record">The track record</a>
+        <a href="/docs/#developers">For developers</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="changes">
+    <div class="wrap">
+      <span class="mono kicker">Changelog</span>
+      <h2 class="h2">What <em>changed.</em></h2>
+      <ul class="log">
+        <li><time datetime="2026-11-27">27 Nov 2026</time><p>This status page, an RSS feed of new calls, a public calls API for developers, the vault contract source published for anyone to check, and plain-language terms.</p></li>
+        <li><time datetime="2026-11-27">27 Nov 2026</time><p>Oxva moved to oxvaagent.com. The old address forwards every link.</p></li>
+        <li><time datetime="2026-11-27">27 Nov 2026</time><p>Calls older than two weeks move to a monthly archive instead of being deleted, and the record keeps counting them.</p></li>
+        <li><time datetime="2026-11-27">27 Nov 2026</time><p>Home shows proof first: the newest graded call, the record and a picture of it. The vault got its own section.</p></li>
+        <li><time datetime="2026-11-26">26 Nov 2026</time><p>Calls: one live call per token, a 3% minimum distance to the invalidation price, and no chasing of very large moves.</p></li>
+        <li><time datetime="2026-11-26">26 Nov 2026</time><p>Share buttons, a share picture for links, Markets as cards on phones, a 404 page, robots.txt and a sitemap.</p></li>
+        <li><time datetime="2026-11-23">23 Nov 2026</time><p>Robinhood stock tokens are judged by stock-sized moves. Docs page added.</p></li>
+        <li><time datetime="2026-11-22">22 Nov 2026</time><p>A live Oxva Vault on Robinhood Chain mainnet (unaudited beta), and wallet login by QR code.</p></li>
+        <li><time datetime="2026-11-21">21 Nov 2026</time><p>First calls, the wall and the Oxva Vault on Robinhood Chain testnet.</p></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="/" aria-label="Oxva home">
+          <svg viewBox="503 308 538 406" aria-hidden="true"><path fill="currentColor" d="M506.5 597L608.1 395.9A160 160 0 0 1 750.9 308L931 308A110 110 0 0 1 1039.5 400L795.7 400A100 100 0 0 0 706.4 454.9L679.2 509ZM1040.8 425A110 110 0 0 1 1031.1 463.6L959.8 620.3A160 160 0 0 1 814.2 714L603 714A100 100 0 0 1 503.3 622.3L644.2 578.2L622.1 622L772 622A100 100 0 0 0 860 569.5L922.6 453.5Z"/></svg>
+          OXVA
+        </a>
+        <p>Reads the market, makes the call, and guards every move an agent makes with your money.</p>
+        <!-- Social links: when a link is ready, add href="https://…" target="_blank" rel="noopener" to its <a> and remove aria-disabled. -->
+        <div class="socials">
+          <a class="soc" href="https://github.com/OxvaAgent/oxva" target="_blank" rel="noopener" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span class="sr-only">GitHub</span></a>
+          <a class="soc" aria-disabled="true" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span class="sr-only">X</span></a>
+          <a class="soc" aria-disabled="true" title="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.94 3.32a1 1 0 0 0-1.03-.15L2.58 10.4a1 1 0 0 0 .06 1.88l4.55 1.5 1.75 5.43a1 1 0 0 0 1.66.42l2.53-2.47 4.47 3.29a1 1 0 0 0 1.57-.6l3.1-15.3a1 1 0 0 0-.33-1.03ZM9.9 14.37l-.73 3.07-1.04-3.23 9.07-6.53Z"/></svg><span class="sr-only">Telegram</span></a>
+        </div>
+      </div>
+      <div><h5 class="mono">Use</h5><a href="/chat/">Chat with Oxva</a><a href="/calls/">Calls &amp; track record</a><a href="/markets/">Markets</a><a href="/read/">Read a token</a><a href="/docs/">Docs</a></div>
+      <div><h5 class="mono">The wall</h5><a href="/vault/">Create a vault</a><a href="/wall/">Try the wall</a><a href="/wall/#pipeline">How a transaction is checked</a><a href="/wall/#security">Security model</a><a href="/#token">$OXVA</a></div>
+      <div><h5 class="mono">Trust</h5><a href="/status/">Status &amp; changelog</a><a href="/vault/#source">Contract source</a><a href="/docs/#developers">Developer API</a><a href="/calls.xml">RSS feed</a><a href="/terms/">Terms</a></div>
+    </div>
+    <div class="legal mono"><span>© 2026 Oxva</span><span>Calls and reads are automated views of public data, not financial advice.</span></div>
+  </div>
+</footer>
+
+<script src="/assets/ui.js"></script>
+<script src="/assets/wc-config.js"></script>
+<script src="/assets/wallet.js"></script>
+<script src="/assets/nav-wallet.js"></script>
+<script src="/assets/status.js"></script>
+</body>
+</html>

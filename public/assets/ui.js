@@ -116,7 +116,9 @@
     return cache;
   }
 
+  // placeholders while calls load; skipped when the page already came with calls in its HTML (lib/live-html.mjs)
   function skeletonCards(box, n) {
+    if (!box || box.children.length) return;
     box.textContent = '';
     for (var i = 0; i < n; i++) {
       var d = el('div', 'call'); d.setAttribute('aria-hidden', 'true');

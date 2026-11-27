@@ -213,7 +213,7 @@ table.t{width:100%;border-collapse:collapse;font-size:14.5px}
 
 /* footer */
 footer{border-top:1px solid var(--ink);padding-block:48px 34px;margin-top:40px}
-.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:28px}
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
 .foot p{color:var(--ink-2);max-width:38ch;margin-top:14px;font-size:15px}
 .foot h5{margin:0 0 12px;color:var(--mute);font-weight:500}
 .foot a{display:block;padding:3px 0;color:var(--ink-2);font-size:15px}

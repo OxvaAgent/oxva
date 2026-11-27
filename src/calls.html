@@ -46,15 +46,15 @@
       <h1 class="h1">Every call, <em>graded in public.</em></h1>
       <p class="lede">Each call is stored when it is made and marked against the price afterwards. An invalidated call stays invalidated, and nothing is deleted: after two weeks a call moves to a monthly archive and still counts in the record.</p>
       <div class="rec">
-        <div><b id="r-total">—</b><span class="mono">Calls made</span></div>
-        <div><b id="r-graded">—</b><span class="mono">Buy &amp; sell graded</span></div>
-        <div><b id="r-working" class="s-working">—</b><span class="mono">Working</span></div>
-        <div><b id="r-against" class="s-against">—</b><span class="mono">Against</span></div>
-        <div><b id="r-invalid" class="s-invalidated">—</b><span class="mono">Invalidated</span></div>
+        <div><b id="r-total"><!--live:r-total-->—<!--/live:r-total--></b><span class="mono">Calls made</span></div>
+        <div><b id="r-graded"><!--live:r-graded-->—<!--/live:r-graded--></b><span class="mono">Buy &amp; sell graded</span></div>
+        <div><b id="r-working" class="s-working"><!--live:r-working-->—<!--/live:r-working--></b><span class="mono">Working</span></div>
+        <div><b id="r-against" class="s-against"><!--live:r-against-->—<!--/live:r-against--></b><span class="mono">Against</span></div>
+        <div><b id="r-invalid" class="s-invalidated"><!--live:r-invalid-->—<!--/live:r-invalid--></b><span class="mono">Invalidated</span></div>
       </div>
-      <div class="split" id="split" aria-hidden="true"></div>
-      <div class="split-key mono"><span><i style="background:var(--up)"></i>Working</span><span><i style="background:var(--flat)"></i>Against</span><span><i style="background:var(--down)"></i>Invalidated</span><span id="r-rate"></span><span id="r-next"></span></div>
-      <p class="archive mono" id="archive"></p>
+      <div class="split" id="split" aria-hidden="true"><!--live:split--><!--/live:split--></div>
+      <div class="split-key mono"><span><i style="background:var(--up)"></i>Working</span><span><i style="background:var(--flat)"></i>Against</span><span><i style="background:var(--down)"></i>Invalidated</span><span id="r-rate"><!--live:r-rate--><!--/live:r-rate--></span><span id="r-next"><!--live:r-next--><!--/live:r-next--></span></div>
+      <p class="archive mono" id="archive"><!--live:archive--><!--/live:archive--></p>
 
       <div class="filters" role="group" aria-label="Filter calls">
         <div class="fgroup" id="f-action">
@@ -71,7 +71,7 @@
           <button class="chip" type="button" data-v="invalidated" aria-pressed="false">Invalidated</button>
         </div>
       </div>
-      <div id="batches" aria-live="polite"><div class="calls-grid" id="loading-grid"></div></div>
+      <div id="batches" aria-live="polite"><!--live:batches--><div class="calls-grid" id="loading-grid"></div><!--/live:batches--></div>
     </div>
   </section>
 

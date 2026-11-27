@@ -22,7 +22,18 @@
   }
   function typing(t) { t.textContent = ''; var s = el('span', 'typing'); s.appendChild(el('i')); s.appendChild(el('i')); s.appendChild(el('i')); t.appendChild(s); }
 
-  function setBusy(b) { busy = b; $('send').disabled = b; $('send').textContent = b ? '…' : 'Send'; }
+  // the limits, from GET /api/chat; set with textContent only
+  function showLimits() {
+    fetch('/api/chat', { headers: { accept: 'application/json' } }).then(function (r) { return r.ok ? r.json() : null; }).then(function (l) {
+      if (!l || !$('limits')) return;
+      var p = $('limits'); p.textContent = 'Free, with limits: ' + l.perHour + ' messages an hour per visitor, ' + l.maxChars.toLocaleString('en-US') + ' characters a message. Today: ';
+      p.appendChild(el('b', '', l.leftToday + ' of ' + l.perDay + ' answers left'));
+      p.appendChild(document.createTextNode(' for the whole site (resets 00:00 UTC).'));
+    }).catch(function () { /* keep the written limits */ });
+  }
+  showLimits();
+
+  function setBusy(b) { busy = b; $('send').disabled = b; $('send').textContent = b ? '…' : 'Send'; if (!b) showLimits(); }
 
   function send(text) {
     text = (text || '').trim();

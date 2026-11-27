@@ -258,11 +258,11 @@ main > section{scroll-margin-top:76px}
             <p class="lp-lede">Oxva reads onchain markets and makes a call on every token it watches, every four hours, held to account in public. And it stands between trading agents and their wallets, checking every transaction before it is signed.</p>
             <div class="stats">
               <!-- proof first: the newest buy or sell call that has been graded, whatever its grade (home.js) -->
-              <div class="glass stat"><span class="mono">Last graded call</span><b id="hs-last">—</b><small id="hs-last-sub">Reading the calls…</small></div>
-              <div class="glass stat"><span class="mono">Calls made</span><b id="hs-total">—</b><small>Graded in public</small></div>
-              <div class="glass stat"><span class="mono">Tokens watched</span><b id="hs-tokens">—</b><small id="hs-tokens-sub">Every four hours</small></div>
+              <div class="glass stat"><span class="mono">Last graded call</span><b id="hs-last"><!--live:hs-last-->—<!--/live:hs-last--></b><small id="hs-last-sub"><!--live:hs-last-sub-->Reading the calls…<!--/live:hs-last-sub--></small></div>
+              <div class="glass stat"><span class="mono">Calls made</span><b id="hs-total"><!--live:hs-total-->—<!--/live:hs-total--></b><small>Graded in public</small></div>
+              <div class="glass stat"><span class="mono">Tokens watched</span><b id="hs-tokens"><!--live:hs-tokens-->—<!--/live:hs-tokens--></b><small id="hs-tokens-sub"><!--live:hs-tokens-sub-->Every four hours<!--/live:hs-tokens-sub--></small></div>
             </div>
-            <div class="status mono" id="status"><span class="dot" aria-hidden="true"></span><span>Awake</span><span id="status-last">Checking the latest call…</span><a href="/calls/#record">verify →</a></div>
+            <div class="status mono" id="status"><span class="dot" aria-hidden="true"></span><span>Awake</span><span id="status-last"><!--live:status-last-->Checking the latest batch…<!--/live:status-last--></span><a href="/status/">status →</a></div>
             <div class="ca glass"><span class="mono">Try the vault</span><code>Free on testnet</code><span class="grow"></span><a href="/vault/">Start →</a></div>
             <!-- @token:soon --><p class="mono hint"><a href="#token">$OXVA is not launched · no contract exists →</a></p><!-- @token:live --><p class="mono hint"><a href="#token">$OXVA is live on Robinhood Chain · official contract {{TOKEN_SHORT}} →</a></p><!-- @token:end -->
             <div class="cta">
@@ -306,8 +306,8 @@ main > section{scroll-margin-top:76px}
         <p>The most recent call on each token, with where the price has gone since.</p>
         <p class="tldr">Oxva’s newest call on each token, and how the price moved after it.</p>
       </div>
-      <div class="calls-grid" id="latest-grid" aria-live="polite"></div>
-      <div class="more mono"><span id="latest-time"></span><a href="/calls/">All calls &amp; the record →</a></div>
+      <div class="calls-grid" id="latest-grid" aria-live="polite"><!--live:latest-grid--><!--/live:latest-grid--></div>
+      <div class="more mono"><span id="latest-time"><!--live:latest-time--><!--/live:latest-time--></span><a href="/calls/">All calls &amp; the record →</a></div>
     </div>
   </section>
 
@@ -320,15 +320,15 @@ main > section{scroll-margin-top:76px}
         <p class="tldr">Every buy and sell is graded in public, misses included.</p>
       </div>
       <div class="rec">
-        <div class="glass"><span class="mono">Calls made</span><b id="rec-total">—</b></div>
-        <div class="glass"><span class="mono">Buy &amp; sell graded</span><b id="rec-graded">—</b></div>
-        <div class="glass"><span class="mono">Working now</span><b id="rec-working">—</b></div>
-        <div class="glass"><span class="mono">Hit rate</span><b id="rec-rate">—</b></div>
+        <div class="glass"><span class="mono">Calls made</span><b id="rec-total"><!--live:rec-total-->—<!--/live:rec-total--></b></div>
+        <div class="glass"><span class="mono">Buy &amp; sell graded</span><b id="rec-graded"><!--live:rec-graded-->—<!--/live:rec-graded--></b></div>
+        <div class="glass"><span class="mono">Working now</span><b id="rec-working"><!--live:rec-working-->—<!--/live:rec-working--></b></div>
+        <div class="glass"><span class="mono">Hit rate</span><b id="rec-rate"><!--live:rec-rate-->—<!--/live:rec-rate--></b></div>
       </div>
       <div class="rec-bar" id="rec-bar" aria-hidden="true"></div>
       <div class="rec-key mono" id="rec-key"></div>
-      <ol class="rec-list" id="rec-list" aria-label="Latest graded calls"><li class="when">Loading the latest graded calls…</li></ol>
-      <div class="more mono"><span id="rec-note">Reading the record…</span><a href="/calls/#record">The full record →</a></div>
+      <ol class="rec-list" id="rec-list" aria-label="Latest graded calls"><!--live:rec-list--><li class="when">Loading the latest graded calls…</li><!--/live:rec-list--></ol>
+      <div class="more mono"><span id="rec-note"><!--live:rec-note-->Reading the record…<!--/live:rec-note--></span><a href="/calls/#record">The full record →</a></div>
     </div>
   </section>
 
@@ -457,7 +457,7 @@ main > section{scroll-margin-top:76px}
         <details><summary>Is a call financial advice?</summary><p>No. A call is an automated reading of public market and contract data, made by fixed rules. It says what the numbers show, not what you should do with your money.</p></details>
         <details><summary>How are calls made?</summary><p>Every four hours Oxva reads price trend and order flow over 5 minutes, 1 hour, 6 hours and 24 hours, runs nine contract checks, and turns that into buy, sell, wait or avoid. The entry zone is sized to recent swings, and the invalidation sits two and a half zones away, at least 3%. After a very large 24-hour move it waits instead of chasing. The rules are published on the Read page.</p></details>
         <details><summary>How is the track record kept honest?</summary><p>Calls are stored when they are made and graded against the price afterwards. An invalidated call stays invalidated. Calls close after three days with their last grade, and none are deleted: after two weeks they move to a monthly archive and still count in the record.</p></details>
-        <details><summary>Who answers in the chat?</summary><p>A Claude model from Anthropic, given Oxva's live data for the token you ask about. Your messages pass through Oxva's server on Netlify to Anthropic's API to get an answer; Oxva does not store them. There is a message limit per hour.</p></details>
+        <details><summary>Who answers in the chat?</summary><p>A Claude model from Anthropic, given Oxva's live data for the token you ask about. Your messages pass through Oxva's server on Netlify to Anthropic's API to get an answer; Oxva does not store them. It is free with limits: 20 messages an hour per visitor and 40 answers a day for the whole site (resets at 00:00 UTC); the chat page shows what is left today.</p></details>
         <details><summary>Can the wall hold my agent's funds?</summary><p>Yes. Create an Oxva Vault on Robinhood Chain, fund it, and set the rules. Try it first on testnet with free test ETH. On mainnet it holds real ETH as a beta: the contract passes our own tests but has not been audited by an outside firm, so a bug could lose funds. Only put in what you can afford to lose.</p></details>
         <details><summary>Do I need a wallet?</summary><p>Only for the vault. Calls, markets, chat and reads work without one. For the vault, any browser wallet such as MetaMask or Rabby works, or scan a QR code with your phone wallet; Oxva never sees your keys.</p></details>
         <!-- @token:soon --><details><summary>Is there an $OXVA token?</summary><p>No. Nothing has launched and no contract exists. Anyone selling it is not Oxva.</p></details><!-- @token:live --><details><summary>Is there an $OXVA token?</summary><p>Yes, on Robinhood Chain. The only official contract is {{TOKEN_CA}}; any other address is not Oxva. It is not advice and Oxva makes no calls on it: a new token is very risky and can lose all its value.</p></details><!-- @token:end -->
