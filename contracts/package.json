@@ -11,7 +11,8 @@
     "key:check": "node scripts/check-key.js",
     "deploy:testnet": "hardhat compile --quiet && node scripts/deploy.js --net testnet",
     "deploy:mainnet": "hardhat compile --quiet && node scripts/deploy.js --net mainnet",
-    "vault": "node scripts/vault.js"
+    "vault": "node scripts/vault.js",
+    "verify:sourcify": "node scripts/verify-sourcify.js"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "3.1.3",
