@@ -98,6 +98,7 @@
         <a href="#what">What Oxva is</a>
         <a href="#calls">Calls</a>
         <a href="#record">Track record</a>
+        <a href="#markets">Markets</a>
         <a href="#read">Read a token</a>
         <a href="#wall">The wall</a>
         <a href="#vault">Oxva Vault</a>
@@ -151,6 +152,11 @@
           </ul>
           <p>A call is graded for three days, then closes with its last status. The <b>hit rate</b> is the share of graded BUY and SELL calls that are working. See it live on <a href="/calls/#record">Calls</a>.</p>
           <p>The rules changed twice, so the record is also shown <b>per rule version</b>: v1, the first rules; v2 from 23 Nov, stock tokens judged by stock-sized moves; v3 from 26 Nov, no chasing, a 3% minimum stop and one live call per token. Next to the hit rate the site also shows how many calls are still running (their grade can still change), how fast stops were hit, how long calls lasted, and since when the record runs. The overall hit rate is never hidden: the context sits beside it.</p>
+        </article>
+
+        <article class="chap" id="markets">
+          <h2>Markets</h2>
+          <p><a href="/markets/">Markets</a> shows every token Oxva watches in one table: the live price and 24-hour change, liquidity and 24-hour volume from the deepest pool, the share of the last day’s trades that were buys, and Oxva’s latest call on it. Prices come from DexScreener; press <b>Refresh</b> for a new read. <b>Read →</b> on a row opens the full read of that token.</p>
         </article>
 
         <article class="chap" id="read">
@@ -268,7 +274,7 @@ console.log(d.record.hitRate, d.latest.map((c) =&gt; c.sym + " " + c.action));</
 
         <article class="chap" id="trust">
           <h2>Status and terms</h2>
-          <p><a href="/status/">Status</a> lists every batch of the last two weeks, when it ran and what it said, with missed batches marked, plus a changelog of the site. The <a href="/terms/">terms</a> say in plain words what Oxva is and is not, the risks of the vault, and what Oxva keeps about you (no accounts, no tracking).</p>
+          <p><a href="/status/">Status</a> lists every batch of the last two weeks, when it ran and what it said, with missed batches marked, plus a changelog of the site. The <a href="/terms/">terms</a> say in plain words what Oxva is and is not, the risks of the vault, and what Oxva keeps about you: no accounts and no tracking cookies, only anonymous visitor totals from Cloudflare Web Analytics.</p>
           <p>The Oxva Vault contract source, the exact compiler input and how to check a vault yourself are on the <a href="/vault/#source">Vault page</a>.</p>
         </article>
       </div>
