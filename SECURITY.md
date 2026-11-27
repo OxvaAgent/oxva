@@ -19,4 +19,4 @@ Oxva will never ask for your seed phrase or private key. Anyone who does is a sc
 
 ## Status
 
-Security so far: the vault contract is open source and verified on-chain, with unit tests, a model-based random test and an automated analysis (Slither, Solhint), described in [`contracts/ANALYSIS.md`](contracts/ANALYSIS.md). **An independent audit is planned and not done yet.** On mainnet it is a beta: only put in what you can afford to lose.
+Security so far: the vault contract is open source and verified on-chain, with unit tests, a model-based random test and an automated analysis (Slither, Solhint), described in [`contracts/ANALYSIS.md`](contracts/ANALYSIS.md). On mainnet it is a beta: only put in what you can afford to lose.

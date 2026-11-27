@@ -87,7 +87,7 @@
 .sim{margin-top:10px;font-size:14px}
 .sim.ok{color:var(--up)}.sim.hold{color:var(--flat)}.sim.no{color:var(--down)}
 
-/* network choice, mainnet risk box, code check */
+/* network choice, code check */
 [hidden]{display:none!important}
 .netpick{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:26px}
 .nets{display:inline-flex;border:1px solid var(--ink);border-radius:999px;padding:3px}
@@ -137,7 +137,7 @@
         <form class="box" id="create" novalidate>
           <h2>Create a vault</h2>
           <p data-net="testnet">You become its owner. Amounts are in test ETH.</p>
-          <p data-net="mainnet" hidden>You become its owner. Amounts are in <b>real ETH</b>. Tick the risk box above first.</p>
+          <p data-net="mainnet" hidden>You become its owner. Amounts are in <b>real ETH</b>. Start with a small amount, and try it on testnet first.</p>
           <div class="f"><label for="c-agent">Agent address</label><input class="mono" id="c-agent" placeholder="0x… (defaults to your own address, so you can try both roles)" autocomplete="off" spellcheck="false"></div>
           <div class="three">
             <div class="f"><label for="c-budget">Hourly budget</label><input id="c-budget" type="number" min="0" step="0.001" value="0.01"></div>

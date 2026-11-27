@@ -311,7 +311,7 @@ main > section{scroll-margin-top:76px}
             </div>
             <div class="status mono" id="status"><span class="dot" aria-hidden="true"></span><span>Awake</span><span id="status-last"><!--live:status-last-->Checking the latest batch…<!--/live:status-last--></span><a href="/status/">status →</a></div>
             <div class="ca glass"><span class="mono">Try the vault</span><code>Free on testnet</code><span class="grow"></span><a href="/vault/">Start →</a></div>
-            <p class="mono hint"><a href="#token">$OXVA is not launched · no contract exists →</a></p>
+            <p class="mono hint"><a href="#token">$OXVA is live on Robinhood Chain · official contract 0xa875…1b3f →</a></p>
             <div class="cta">
               <a class="btn btn-ink" href="/chat/">Ask Oxva <span class="arr">→</span></a>
               <a class="btn btn-line" href="/calls/">See the calls</a>
@@ -457,16 +457,20 @@ main > section{scroll-margin-top:76px}
         <div>
           <span class="mono muted">The token</span>
           <div class="big">$OXVA</div>
-          <p class="lp-lede">A token bound to this agent is an idea, not a product. If it ever launches, it will be announced on this page first, with its contract address.</p>
+          <p class="lp-lede">Oxva’s token is live on Robinhood Chain. The contract listed here is the only official one: check it before you trade.</p>
+          <div class="cta">
+            <a class="btn btn-ink" href="https://dexscreener.com/robinhood/0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f" target="_blank" rel="noopener">Chart <span class="arr">↗</span></a>
+            <a class="btn btn-line" href="/read/?t=0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f&c=robinhood">Read it on Oxva</a>
+          </div>
         </div>
         <div>
           <dl class="facts">
-            <div><dt>Status</dt><dd>Not launched</dd></div>
-            <div><dt>Contract</dt><dd>None. No contract exists.</dd></div>
-            <div><dt>Chain</dt><dd>Not decided</dd></div>
-            <div><dt>Sale</dt><dd>None planned</dd></div>
+            <div><dt>Status</dt><dd>Live · Since 2026-11-27</dd></div>
+            <div><dt>Contract</dt><dd><code class="tca">0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f</code> <button class="tca-copy" type="button" data-copy="0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f">Copy</button></dd></div>
+            <div><dt>Chain</dt><dd>Robinhood Chain (4663)</dd></div>
+            <div><dt>Explorer</dt><dd><a href="https://robinhoodchain.blockscout.com/token/0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f" target="_blank" rel="noopener">See the contract ↗</a></dd></div>
           </dl>
-          <p class="warn">Anyone offering $OXVA today is not Oxva. Do not send money to anyone selling it.</p>
+          <p class="warn">Robinhood Chain has many look-alike tokens. Any other $OXVA contract is not Oxva. Not financial advice: a new token is very risky and can lose all its value. Oxva makes no calls on its own token.</p>
         </div>
       </div>
       
@@ -478,7 +482,7 @@ main > section{scroll-margin-top:76px}
       <div class="lp-head">
         <span class="mono">Questions</span>
         <h2 class="lp-h2">Before you <em>ask</em>.</h2>
-        <p class="tldr">Not advice, not launched, never asks for your keys.</p>
+        <p class="tldr">Not advice, one official contract, never asks for your keys.</p>
       </div>
       <div class="faq">
         <details><summary>Is a call financial advice?</summary><p>No. A call is an automated reading of public market and contract data, made by fixed rules. It says what the numbers show, not what you should do with your money.</p></details>
@@ -487,7 +491,7 @@ main > section{scroll-margin-top:76px}
         <details><summary>Who answers in the chat?</summary><p>A Claude model from Anthropic, given Oxva's live data for the token you ask about. Your messages pass through Oxva's server on Netlify to Anthropic's API to get an answer; Oxva does not store them. It is free with limits: 20 messages an hour per visitor and 40 answers a day for the whole site (resets at 00:00 UTC); the chat page shows what is left today.</p></details>
         <details><summary>Can the wall hold my agent's funds?</summary><p>Yes. Create an Oxva Vault on Robinhood Chain, fund it, and set the rules. Try it first on testnet with free test ETH. On mainnet it holds real ETH as a beta: the contract is open source, verified on-chain, and passes 21 tests and an automated analysis. A bug could still lose funds. Only put in what you can afford to lose. You can read the code on chain: Oxva's own vault <a href="https://robinhoodchain.blockscout.com/address/0xa38724bE1e75FA99dC09D539ee7cfc044b35aB14?tab=contract" target="_blank" rel="noopener">0xa387…aB14</a> is verified on Blockscout, an exact match with the published source.</p></details>
         <details><summary>Do I need a wallet?</summary><p>Only for the vault. Calls, markets, chat and reads work without one. For the vault, any browser wallet such as MetaMask or Rabby works, or scan a QR code with your phone wallet; Oxva never sees your keys.</p></details>
-        <details><summary>Is there an $OXVA token?</summary><p>No. Nothing has launched and no contract exists. Anyone selling it is not Oxva.</p></details>
+        <details><summary>Is there an $OXVA token?</summary><p>Yes, on Robinhood Chain. The only official contract is 0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f; any other address is not Oxva. It is not advice and Oxva makes no calls on it: a new token is very risky and can lose all its value.</p></details>
       </div>
     </div>
   </section>
