@@ -4,7 +4,7 @@
 
 Oxva is an onchain agent with two jobs. Every four hours it reads the market and makes a call on each token it watches, and every call is graded in public afterwards. It also stands between AI agents and their money: an Oxva Vault lets an agent spend only inside rules its owner sets, enforced by a smart contract.
 
-Website: <https://oxvaagent.com> · Docs: <https://oxvaagent.com/docs/> · X and Telegram: coming soon
+Website: <https://oxvaagent.com> · Docs: <https://oxvaagent.com/docs/> · X: [@oxvaagent](https://x.com/oxvaagent) · Telegram: coming soon
 
 ## What it does
 

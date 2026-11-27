@@ -95,6 +95,7 @@ ${seo}
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Oxva: reads the market, guards every move. Robinhood Chain onchain agent.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@oxvaagent">
 <meta name="twitter:title" content="${esc(page.ogTitle)}">
 <meta name="twitter:description" content="${esc(desc)}">
 <meta name="twitter:image" content="${OG_IMAGE}">
