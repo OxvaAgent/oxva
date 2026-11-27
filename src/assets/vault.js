@@ -82,12 +82,6 @@
     return String(code).toLowerCase().split('000000000000000000000000' + owner.toLowerCase().slice(2)).join('0'.repeat(64)) === want;
   }
 
-  /** On mainnet, putting money in needs the risk box ticked first. */
-  function needAck() {
-    if (!NET.main || $('ack').checked) return;
-    $('risk').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('ack').focus();
-    throw new Error('Tick “I understand the risks” in the red box at the top first.');
-  }
 
   /* ---------- remembered vaults (this browser only) ---------- */
   function mine() { try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch (e) { return []; } }
@@ -179,7 +173,6 @@
   async function create(ev) {
     ev.preventDefault();
     try {
-      needAck();
       var signer = await ready();
       var me = S.account;
       var agent = $('c-agent').value.trim() ? addr($('c-agent').value, 'The agent') : me;
@@ -474,7 +467,6 @@
   $('m-dep-go').addEventListener('click', function () {
     try {
       if (NET.main && !S.verified) throw new Error('This address does not run the Oxva vault code, so this page will not send money to it.');
-      needAck();
       var v = amount('m-dep');
       act('r-msg', 'Deposited ' + eth(v), function (s) { return s.sendTransaction({ to: S.addr, value: v }); }, false);
     } catch (e) { say('r-msg', e.message, 'err'); }
