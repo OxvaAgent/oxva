@@ -17,6 +17,25 @@
     });
   })();
 
+  /* ---------- $OXVA on DexScreener ----------
+   * The DexScreener page for the official contract only works once DexScreener has indexed a pool for it. Until then the
+   * button would open "Token or Pair Not Found", so it points to the token on the explorer and says the listing is pending.
+   * Look-alike tokens may have their own pages there: only the official contract (data-ca) is ever linked. */
+  (function dexCheck() {
+    var btn = $('tok-dex'), row = $('tok-chart'); if (!btn) return;
+    var ca = btn.getAttribute('data-ca') || '', explorer = btn.getAttribute('data-explorer') || '';
+    if (!/^0x[0-9a-fA-F]{40}$/.test(ca) || !/^https:\/\/robinhoodchain\.blockscout\.com\//.test(explorer)) return;
+    fetch('https://api.dexscreener.com/tokens/v1/robinhood/' + ca, { headers: { accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (pairs) {
+        if (!Array.isArray(pairs)) return; // DexScreener did not answer: keep the link as it is
+        var mine = pairs.filter(function (p) { return p && p.baseToken && String(p.baseToken.address).toLowerCase() === ca.toLowerCase(); });
+        if (mine.length) return; // listed: the DexScreener link works
+        btn.href = explorer; btn.textContent = 'Explorer '; btn.appendChild(U.el('span', 'arr', '↗'));
+        if (row) { row.textContent = 'DexScreener listing pending. '; var a = U.el('a', '', 'See the token on the explorer ↗'); a.href = explorer; a.target = '_blank'; a.rel = 'noopener'; row.appendChild(a); }
+      }, function () { /* offline: keep the link */ });
+  })();
+
   /* ---------- the record as a picture: share of working / against / invalidated, and the last graded calls ---------- */
   var STATUS = { working: 'Working', against: 'Against', invalidated: 'Invalidated' };
   function recordChart(r, calls, now) {

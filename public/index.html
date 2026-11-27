@@ -225,6 +225,7 @@ main > section{scroll-margin-top:76px}
 .facts div{display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px;padding:13px 0;border-bottom:1px solid var(--gl)}
 .facts dt{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
 .facts dd{margin:0;color:var(--ink-2)}
+.facts dd a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4)}
 .warn{margin-top:18px;padding:14px 16px;border-left:2px solid var(--down);border-radius:0 10px 10px 0;background:rgba(226,113,95,.07);color:var(--ink-2)}
 @media (max-width:820px){.token{grid-template-columns:minmax(0,1fr)}.facts div{grid-template-columns:110px minmax(0,1fr)}}
 
@@ -459,7 +460,7 @@ main > section{scroll-margin-top:76px}
           <div class="big">$OXVA</div>
           <p class="lp-lede">Oxva’s token is live on Robinhood Chain. The contract listed here is the only official one: check it before you trade.</p>
           <div class="cta">
-            <a class="btn btn-ink" href="https://dexscreener.com/robinhood/0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f" target="_blank" rel="noopener">Chart <span class="arr">↗</span></a>
+            <a class="btn btn-ink" id="tok-dex" data-ca="0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f" data-explorer="https://robinhoodchain.blockscout.com/token/0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f" href="https://dexscreener.com/robinhood/0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f" target="_blank" rel="noopener">DexScreener <span class="arr">↗</span></a>
             <a class="btn btn-line" href="/read/?t=0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f&c=robinhood">Read it on Oxva</a>
           </div>
         </div>
@@ -468,6 +469,7 @@ main > section{scroll-margin-top:76px}
             <div><dt>Status</dt><dd>Live · Since 2026-11-27</dd></div>
             <div><dt>Contract</dt><dd><code class="tca">0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f</code> <button class="tca-copy" type="button" data-copy="0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f">Copy</button></dd></div>
             <div><dt>Chain</dt><dd>Robinhood Chain (4663)</dd></div>
+            <div><dt>Chart</dt><dd id="tok-chart"><a href="https://dexscreener.com/robinhood/0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f" target="_blank" rel="noopener">$OXVA on DexScreener ↗</a></dd></div>
             <div><dt>Explorer</dt><dd><a href="https://robinhoodchain.blockscout.com/token/0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f" target="_blank" rel="noopener">See the contract ↗</a></dd></div>
           </dl>
           <p class="warn">Robinhood Chain has many look-alike tokens. Any other $OXVA contract is not Oxva. Not financial advice: a new token is very risky and can lose all its value. Oxva makes no calls on its own token.</p>

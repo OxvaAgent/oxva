@@ -132,6 +132,20 @@
   Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) { if (a.getAttribute('data-nav') === here) a.setAttribute('aria-current', 'page'); });
 
   // any <button data-copy="…"> copies its value (the $OXVA contract on home and Docs)
+  // a DexScreener link for the official $OXVA contract (data-dex-ca): until DexScreener has indexed a pool for it, the
+  // link goes to the explorer and says so (data-fallback), instead of opening "Token or Pair Not Found"
+  Array.prototype.forEach.call(document.querySelectorAll('a[data-dex-ca]'), function (a) {
+    var ca = a.getAttribute('data-dex-ca') || '', explorer = a.getAttribute('data-explorer') || '';
+    if (!/^0x[0-9a-fA-F]{40}$/.test(ca) || !/^https:\/\/robinhoodchain\.blockscout\.com\//.test(explorer)) return;
+    fetch('https://api.dexscreener.com/tokens/v1/robinhood/' + ca, { headers: { accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (pairs) {
+        if (!Array.isArray(pairs)) return;
+        if (pairs.some(function (p) { return p && p.baseToken && String(p.baseToken.address).toLowerCase() === ca.toLowerCase(); })) return;
+        a.href = explorer; a.textContent = a.getAttribute('data-fallback') || 'the explorer';
+      }, function () { /* offline: keep the link */ });
+  });
+
   Array.prototype.forEach.call(document.querySelectorAll('button[data-copy]'), function (b) {
     var label = b.textContent;
     b.addEventListener('click', function () {

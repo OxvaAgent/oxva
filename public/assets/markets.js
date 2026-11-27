@@ -73,7 +73,9 @@
       return Promise.all(universe.map(function (t) { return pairsFor(t).then(function (p) { return row(t, p, latest[t.address.toLowerCase()]); }, function () { return row(t, [], latest[t.address.toLowerCase()]); }); }))
         .then(function (rows) {
           var tb = $('rows'); tb.textContent = ''; rows.forEach(function (r) { tb.appendChild(r); });
-          $('m-time').textContent = 'Read at ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · prices from DexScreener · calls ' + (d.updatedAt ? 'graded ' + U.ago(d.updatedAt) : '');
+          var mt = $('m-time'); mt.textContent = 'Read at ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · prices from ';
+          var dx = el('a', '', 'DexScreener'); dx.href = 'https://dexscreener.com'; dx.target = '_blank'; dx.rel = 'noopener'; mt.appendChild(dx);
+          mt.appendChild(document.createTextNode(' · calls ' + (d.updatedAt ? 'graded ' + U.ago(d.updatedAt) : '')));
           loading = false;
         });
     });
