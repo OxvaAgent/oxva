@@ -1,0 +1,4 @@
+{
+  "_help": "Visitor statistics with Cloudflare Web Analytics (free, no cookies). Paste the site token from Cloudflare > Analytics & Logs > Web Analytics > oxvaagent.com > Manage site (the \"token\" in the JS snippet), then build and deploy. Empty = no statistics script on the site. The token is public by design: it sits in every page.",
+  "cloudflareToken": "e7d21d2177cc4fdf99a8ef6dd726bda1"
+}

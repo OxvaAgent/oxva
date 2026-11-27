@@ -120,6 +120,7 @@
       <h2>7. What Oxva keeps about you</h2>
       <ul>
         <li>No accounts, no sign-up, no ads and no tracking cookies.</li>
+        <li>Visitor statistics through Cloudflare Web Analytics: page views, referring sites, country and device type, counted without cookies and without following you to other sites. Oxva sees totals only.</li>
         <li>To enforce the chat limits, a counter per hour and per day, keyed by a one-way hash of your IP address, not the address itself.</li>
         <li>In your own browser only: tokens you read recently, vaults you opened, and the chat of the current tab.</li>
         <li>Netlify, which hosts the site, keeps standard request logs under its own policy. WalletConnect (Reown) relays the connection when you log in with a phone wallet by QR code.</li>
@@ -166,5 +167,6 @@
 <script src="/assets/wc-config.js"></script>
 <script src="/assets/wallet.js"></script>
 <script src="/assets/nav-wallet.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e7d21d2177cc4fdf99a8ef6dd726bda1"}'></script>
 </body>
 </html>

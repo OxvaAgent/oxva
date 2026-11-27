@@ -50,6 +50,14 @@ const { readToken, applyToken } = require('../lib/token.js');
 const TOKEN = readToken();
 console.log('$OXVA: ' + (TOKEN.live ? 'live, contract ' + TOKEN.address : 'not launched'));
 
+// Visitor statistics (src/analytics.json): Cloudflare Web Analytics, without cookies. Its token is public by design
+// (it sits in every page). Empty token = no statistics script at all.
+const ANALYTICS = JSON.parse(fs.readFileSync(path.join(srcDir, 'analytics.json'), 'utf8'));
+const CF_TOKEN = String(ANALYTICS.cloudflareToken || '').trim();
+if (CF_TOKEN && !/^[0-9A-Za-z]{20,64}$/.test(CF_TOKEN)) throw new Error('src/analytics.json: cloudflareToken does not look like a Cloudflare Web Analytics token');
+const BEACON = CF_TOKEN ? `\n<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${CF_TOKEN}"}'></script>` : '';
+console.log('Visitor statistics: ' + (CF_TOKEN ? 'Cloudflare Web Analytics on' : 'off (no token in src/analytics.json)'));
+
 // The site's public address, used for share links and the share picture (social apps need a full URL).
 // Netlify sets URL to the site's main address at build time, so a custom domain is picked up by itself once it is added.
 const SITE_URL = (process.env.OXVA_SITE_URL || process.env.URL || 'https://oxvaagent.com').replace(/\/+$/, '');
@@ -105,7 +113,7 @@ ${seo}
 ${head}
 </head>
 <body data-page="${page.key}">
-${body}
+${body}${BEACON}
 </body>
 </html>
 `;
