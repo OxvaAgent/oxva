@@ -24,13 +24,13 @@
       sum.appendChild(document.createTextNode(' · last batch ' + utc(last.at) + ' (' + U.ago(last.at, now) + ')' + (d.nextCallAt ? ' · next at ' + utc(d.nextCallAt) : '')));
     }
     var body = $('st-rows'); body.textContent = '';
-    if (!batches.length) { var tr0 = U.el('tr'); var td0 = cell(tr0, 'No batches yet.', 'muted'); td0.colSpan = 6; body.appendChild(tr0); }
+    if (!batches.length) { var tr0 = U.el('tr'); var td0 = cell(tr0, 'No batches yet.', 'muted'); td0.colSpan = 7; body.appendChild(tr0); }
     batches.slice(0, 42).forEach(function (b) {
       var tr = U.el('tr', b.missed ? 'missed' : '');
-      if (b.missed) { cell(tr, utc(b.slot)); var td = cell(tr, 'Missed: no calls in this slot', 's-invalidated'); td.colSpan = 5; }
+      if (b.missed) { cell(tr, utc(b.slot)); var td = cell(tr, 'Missed: no calls in this slot', 's-invalidated'); td.colSpan = 6; }
       else {
         cell(tr, utc(b.at)); cell(tr, String(b.calls), 'r'); cell(tr, String(b.BUY || 0), 'r s-working');
-        cell(tr, String(b.SELL || 0), 'r s-invalidated'); cell(tr, String(b.WAIT || 0), 'r s-against'); cell(tr, String(b.AVOID || 0), 'r');
+        cell(tr, String(b.SELL || 0), 'r s-invalidated'); cell(tr, String(b.WAIT || 0), 'r s-against'); cell(tr, String(b.AVOID || 0), 'r'); cell(tr, String(b.seen || 0), 'r');
       }
       body.appendChild(tr);
     });

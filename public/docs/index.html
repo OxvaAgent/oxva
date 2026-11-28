@@ -150,6 +150,7 @@
             <li><b>Invalidated</b>: the price crossed the invalidation. This is final; it stays invalidated.</li>
             <li><b>Watching</b>: WAIT and AVOID calls. They are shown but not counted in the score.</li>
           </ul>
+          <p>While a BUY or SELL on a token is still being graded, a later batch that reads the token the same way makes no new call: one view counts once. The running call notes it instead (“read the same way again”), and <a href="/calls/#running">Running now</a> on Calls lists every running call, however old.</p>
           <p>A call is graded for three days, then closes with its last status. The <b>hit rate</b> is the share of graded BUY and SELL calls that are working. See it live on <a href="/calls/#record">Calls</a>.</p>
           <p>The rules changed twice, so the record is also shown <b>per rule version</b>: v1, the first rules; v2 from 23 Nov, stock tokens judged by stock-sized moves; v3 from 26 Nov, no chasing, a 3% minimum stop and one live call per token. Next to the hit rate the site also shows how many calls are still running (their grade can still change), how fast stops were hit, how long calls lasted, and since when the record runs. The overall hit rate is never hidden: the context sits beside it.</p>
         </article>
@@ -257,9 +258,9 @@
           <pre><code>GET https://oxvaagent.com/api/calls</code></pre>
           <ul>
             <li><code>record</code>: every call ever made, archived ones included: <code>total</code>, <code>graded</code>, <code>working</code>, <code>against</code>, <code>invalidated</code>, <code>waits</code>, <code>avoids</code>, <code>hitRate</code> (percent of graded buy and sell calls that are working).</li>
-            <li><code>latest</code>: the newest call on each token Oxva watches. <code>calls</code>: the newest 120 calls.</li>
-            <li>Each call: <code>sym</code>, <code>chain</code>, <code>address</code>, <code>action</code> (BUY, SELL, WAIT or AVOID), <code>conviction</code> (1 to 5), <code>price</code>, <code>entry</code> [low, high], <code>invalidation</code>, <code>reason</code>, <code>risk</code>, <code>status</code> (open, working, against, invalidated, watching), <code>final</code>, <code>at</code> (Unix ms) and <code>now</code> (the latest price, time and move in percent).</li>
-            <li><code>batches</code>: one row per four-hour slot, with missed slots marked; <code>updatedAt</code>, <code>nextCallAt</code>, <code>universe</code> (the tokens watched), <code>rules</code> (the numbers the rules use) and <code>archive</code> (the months archived).</li>
+            <li><code>latest</code>: the newest reading on each token Oxva watches (a running call read the same way again counts from that reading). <code>calls</code>: the newest 120 calls. <code>running</code>: every BUY or SELL still being graded, however old.</li>
+            <li>Each call: <code>sym</code>, <code>chain</code>, <code>address</code>, <code>action</code> (BUY, SELL, WAIT or AVOID), <code>conviction</code> (1 to 5), <code>price</code>, <code>entry</code> [low, high], <code>invalidation</code>, <code>reason</code>, <code>risk</code>, <code>status</code> (open, working, against, invalidated, watching), <code>final</code>, <code>at</code> (Unix ms) and <code>now</code> (the latest price, time and move in percent). A running call that later batches read the same way also has <code>seen</code> (those slots) and <code>seenAt</code> (the last such reading).</li>
+            <li><code>batches</code>: one row per four-hour slot, with missed slots marked and <code>seen</code>, the readings that matched a running call; <code>updatedAt</code>, <code>nextCallAt</code>, <code>universe</code> (the tokens watched), <code>rules</code> (the numbers the rules use) and <code>archive</code> (the months archived).</li>
           </ul>
           <pre><code>const d = await fetch("https://oxvaagent.com/api/calls").then((r) =&gt; r.json());
 console.log(d.record.hitRate, d.latest.map((c) =&gt; c.sym + " " + c.action));</code></pre>

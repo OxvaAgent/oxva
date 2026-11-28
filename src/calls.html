@@ -26,6 +26,12 @@
 .archive-view p{color:var(--ink-2);margin-top:8px;max-width:62ch}
 .archive-view .links{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:11.5px}
 .archive-view .links a{color:var(--em);border-bottom:1px solid rgba(63,214,160,.4)}
+/* running now: every buy or sell still being graded, however old (calls.js, filled first by lib/live-html.mjs) */
+.running{margin-top:44px;scroll-margin-top:90px}
+.running-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px;padding-bottom:6px}
+.running-head .h2{font-size:clamp(28px,3.6vw,40px)}
+.running-note{color:var(--ink-2);margin:8px 0 18px;max-width:64ch}
+.running-more{margin-top:16px}
 @media (max-width:820px){.rec{grid-template-columns:repeat(2,minmax(0,1fr))}.rec div:nth-child(odd){padding-left:0;border-left:0}.rec div{border-bottom:1px solid var(--line);padding-bottom:14px}}
 
 .filters{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:46px 0 18px}
@@ -66,6 +72,12 @@
       <p class="follow mono"><span>Follow new batches:</span><a href="https://t.me/oxvaagent" target="_blank" rel="noopener">Telegram</a><a href="https://x.com/oxvaagent" target="_blank" rel="noopener">X</a><a href="/calls.xml">RSS feed of new calls</a></p>
       <div class="archive-view glass" id="archive-view" hidden></div>
 
+      <div class="running" id="running">
+        <div class="running-head"><h2 class="h2">Running <em>now.</em></h2><span class="mono muted" id="running-count"><!--live:running-count--><!--/live:running-count--></span></div>
+        <p class="running-note">Every buy and sell call still being graded, however old. Its grade can change until it closes. When a later batch reads the token the same way, no new call is made; the card says when Oxva last read it that way.</p>
+        <div class="calls-grid" id="running-grid"><!--live:running-grid--><!--/live:running-grid--></div>
+      </div>
+
       <div class="filters" role="group" aria-label="Filter calls">
         <div class="fgroup" id="f-action">
           <button class="chip" type="button" data-v="all" aria-pressed="true">All</button>
@@ -98,7 +110,7 @@
         <div><h4>Entry zone</h4><p>The call price plus and minus a band sized to recent swings: between <span data-rule="bandMin">0.6</span>% and <span data-rule="bandMax">5</span>% each way.</p></div>
         <div><h4>Invalidation</h4><p><span data-rule="invalidationBands">2.5</span> bands below the call price for a buy, above it for a sell, and never closer than <span data-rule="minInvalidationPct">3</span>%. Touching it ends the call.</p></div>
         <div><h4>No chasing</h4><p>After a very large move in 24 hours (7.5% for a Robinhood stock token, 30% for other tokens) a buy or sell becomes wait: such moves often snap back.</p></div>
-        <div><h4>One live call</h4><p>While a buy or sell on a token is still being graded, the same call is not made again every four hours, so one view counts once in the record.</p></div>
+        <div><h4>One live call</h4><p>While a buy or sell on a token is still being graded, the same call is not made again every four hours, so one view counts once in the record. The running call shows each time Oxva read it the same way again.</p></div>
         <div><h4>Grading</h4><p>Working when the price is on the right side of the call price, against when it is not. Graded for <span data-rule="gradeHours">72</span> hours, then closed with its last grade.</p></div>
         <div><h4>What counts</h4><p>Only buy and sell calls count toward the hit rate. Wait and avoid calls are shown but not scored.</p></div>
       </div>

@@ -24,7 +24,7 @@
 .log li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 18px;padding:12px 2px;border-bottom:1px solid var(--line)}
 .log time{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding-top:3px}
 .log p{color:var(--ink-2)}
-@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}.st-table th,.st-table td{padding:9px 10px}}
+@media (max-width:560px){.log li{grid-template-columns:minmax(0,1fr)}.st-table th,.st-table td{padding:9px 10px}.st-table td:first-child{white-space:nowrap}}
 </style>
 
 <!-- @nav -->
@@ -40,13 +40,13 @@
       <div class="st-wrap">
         <div class="st-scroll">
           <table class="st-table">
-            <thead><tr><th>Batch (UTC)</th><th class="r">Calls</th><th class="r">Buy</th><th class="r">Sell</th><th class="r">Wait</th><th class="r">Avoid</th></tr></thead>
-            <tbody id="st-rows"><!--live:status-rows--><tr><td colspan="6" class="muted">Loading the batches…</td></tr><!--/live:status-rows--></tbody>
+            <thead><tr><th>Batch (UTC)</th><th class="r">Calls</th><th class="r">Buy</th><th class="r">Sell</th><th class="r">Wait</th><th class="r">Avoid</th><th class="r">Read again</th></tr></thead>
+            <tbody id="st-rows"><!--live:status-rows--><tr><td colspan="7" class="muted">Loading the batches…</td></tr><!--/live:status-rows--></tbody>
           </table>
         </div>
       </div>
       <p class="st-note" id="st-errors"><!--live:status-errors--><!--/live:status-errors--></p>
-      <p class="st-note">Fewer calls than tokens in a batch is normal: while a buy or sell on a token is still being graded, the same call is not made again every four hours.</p>
+      <p class="st-note">Fewer calls than tokens in a batch is normal: while a buy or sell on a token is still being graded and Oxva reads the token the same way, the same call is not made again. Those readings are counted under <b>Read again</b> and shown on the running call on <a href="/calls/#running">Calls</a>.</p>
       <div class="st-links mono">
         <a href="/api/calls">The raw data (JSON)</a>
         <a href="/calls.xml">RSS feed of new calls</a>
@@ -61,6 +61,7 @@
       <span class="mono kicker">Changelog</span>
       <h2 class="h2">What <em>changed.</em></h2>
       <ul class="log">
+        <li><time datetime="2026-11-28">28 Nov 2026</time><p>Calls: every buy or sell still being graded is listed under Running now on the Calls page, however old (before, only the newest 120 calls were shown, so older running calls were hidden behind waits). When a later batch reads a token the same way as its running call, the card says so and this page counts it under Read again, instead of the batch just looking short.</p></li>
         <li><time datetime="2026-11-28">28 Nov 2026</time><p>DexScreener is a link wherever it is named: the $OXVA chart on home and in Docs, prices on Markets, and the data sources in Docs and the terms. Until DexScreener lists the official $OXVA pool, those $OXVA links open the token on the explorer instead.</p></li>
         <li><time datetime="2026-11-27">27 Nov 2026</time><p>$OXVA is live on Robinhood Chain. The site now shows the only official contract, 0xa875f903ed4ed1fc4a259f3c559d6bc29d6e1b3f, with a look-alike warning. Oxva makes no calls on its own token.</p></li>
         <li><time datetime="2026-11-27">27 Nov 2026</time><p>Docs: a chapter on the Markets page, and the privacy line now mentions the cookieless visitor totals.</p></li>

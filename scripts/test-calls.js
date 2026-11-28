@@ -277,6 +277,60 @@ const tests = {
       assert.deepStrictEqual(d.archive, ['2026-11']);
       assert.strictEqual(C.view(d, NOW).record.total, 7 + C.UNIVERSE.length);
     });
+  },
+  'a repeat of a running call is noted on it and counted in its batch, not made again'() {
+    const gatherFn = (t) => Promise.resolve(forToken(t, mild(1)));
+    const priceFn = () => Promise.resolve(2.5);
+    const s1 = C.slotOf(NOW) + 4 * H, s2 = C.slotOf(NOW) + 8 * H;
+    return C.cycle(null, NOW, gatherFn, priceFn).then((d1) => {
+      assert.ok(d1.calls.every((c) => c.action === 'BUY' && !c.seen), 'first slot: new BUY calls, nothing seen yet');
+      return C.cycle(d1, NOW + 4 * H, gatherFn, priceFn).then((d2) => {
+        assert.strictEqual(d2.calls.length, C.UNIVERSE.length, 'the same view is not a new call');
+        assert.ok(d2.calls.every((c) => c.seen && c.seen.length === 1 && c.seen[0] === s1 && c.seenAt === NOW + 4 * H), 'it is noted on the running call');
+        assert.ok(d2.calls.every((c) => c.status === 'working'), 'the running call is still graded');
+        return C.cycle(d2, NOW + 8 * H, gatherFn, priceFn).then((d3) => {
+          assert.deepStrictEqual(d3.calls[0].seen, [s1, s2]);
+          const b = C.batches(d3.calls, NOW + 8 * H + H);
+          const bs = Object.fromEntries(b.map((x) => [x.slot, x]));
+          assert.ok(bs[s1] && !bs[s1].missed, 'a slot where every token read the same way is not missed');
+          assert.strictEqual(bs[s1].calls, 0);
+          assert.strictEqual(bs[s1].seen, C.UNIVERSE.length);
+          assert.strictEqual(bs[C.slotOf(NOW)].seen, 0);
+        });
+      });
+    });
+  },
+  'a repeat is noted on the newest running call when an older one is still open'() {
+    const old = Object.assign(callOn(W, bullish, NOW - 8 * H), { id: 'old' });
+    const mid = Object.assign(callOn(W, bullish, NOW - 4 * H), { id: 'mid' });
+    const gatherFn = (t) => Promise.resolve(forToken(t, mild(1)));
+    return C.cycle({ calls: [mid, old], slot: C.slotOf(NOW - 4 * H) }, NOW, gatherFn, () => Promise.resolve(2.1)).then((d) => {
+      const byId = Object.fromEntries(d.calls.map((c) => [c.id, c]));
+      assert.ok(byId.mid.seen && byId.mid.seen.length === 1);
+      assert.ok(!byId.old.seen);
+    });
+  },
+  'view lists every running call, even when the newest 120 calls are all waits'() {
+    const buy = callOn(W, bullish, NOW);
+    const waits = Array.from({ length: 125 }, (_, i) => Object.assign(callOn(W2, data, NOW + (i + 1) * 4 * H), { id: 'w' + i }));
+    const calls = waits.reverse().concat(buy);
+    const v = C.view({ calls, slot: 0, updatedAt: NOW }, NOW + 60 * H);
+    assert.ok(!v.calls.some((c) => c.id === buy.id), 'the BUY is past the newest 120');
+    assert.deepStrictEqual(v.running.map((c) => c.id), [buy.id]);
+    const closed = Object.assign({}, buy, { final: true, status: 'working' });
+    assert.deepStrictEqual(C.view({ calls: [closed], slot: 0 }, NOW).running, [], 'a closed call is not running');
+  },
+  'latest per token follows the newest reading: a running call read again beats an older wait'() {
+    const buy = callOn(W, bullish, NOW), wait = callOn(W, data, NOW + 4 * H);
+    const again = Object.assign({}, buy, { seen: [C.slotOf(NOW + 8 * H)], seenAt: NOW + 8 * H });
+    assert.strictEqual(C.view({ calls: [wait, again], slot: 0 }, NOW + 9 * H).latest[0].action, 'BUY');
+    const before = Object.assign({}, buy, { seen: [C.slotOf(NOW + 2 * H)], seenAt: NOW + 2 * H });
+    assert.strictEqual(C.view({ calls: [wait, before], slot: 0 }, NOW + 9 * H).latest[0].action, 'WAIT', 'a newer wait still wins');
+  },
+  'the record runs since the first archived month'() {
+    const c = callOn(W, data, NOW);
+    const ctx = C.context({ calls: [c], archive: ['2026-10', 'bad', '2026-11'] }, NOW);
+    assert.strictEqual(ctx.since, Date.UTC(2026, 9, 1));
   }
 };
 

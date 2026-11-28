@@ -107,7 +107,8 @@ async function callsContext(context) {
     return {
       record: v.record,
       latestCalls: v.latest.map((c) => ({ token: c.sym, chain: c.chain, action: c.action, conviction: c.conviction, madeAt: new Date(c.at).toISOString(),
-        priceAtCall: c.price, entryZone: c.entry, invalidation: c.invalidation, status: c.status, moveSinceCallPct: c.now && c.now.move, reason: c.reason, risk: c.risk }))
+        priceAtCall: c.price, entryZone: c.entry, invalidation: c.invalidation, status: c.status, moveSinceCallPct: c.now && c.now.move, reason: c.reason, risk: c.risk,
+        lastReadSameWayAt: c.seenAt ? new Date(c.seenAt).toISOString() : null }))
     };
   } catch {
     return null;

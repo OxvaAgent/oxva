@@ -83,6 +83,30 @@ const tests = {
     assert.strictEqual(utc(Date.UTC(2026, 0, 5, 4, 7)), "5 Jan, 04:07 UTC");
     assert.strictEqual(pct(-1.25), "−1.3%");
     assert.strictEqual(pct(12), "+12%");
+  },
+  "running calls are filled when the answer has them, newest first, escaped"() {
+    const old = call({ id: "NVDA-old", sym: "NVDA", at: slot - 40 * H, seen: [slot - 4 * H, slot], seenAt: slot + 5 * 60e3 });
+    const evil = call({ id: "X", sym: "<img src=x>", at: slot - 8 * H });
+    const v = values(Object.assign({}, data, { running: [old, evil, call()], rules: { keepDays: 14, gradeHours: 72 } }), NOW);
+    assert.strictEqual(v["running-count"], "3 running · graded for up to 72 h");
+    const grid = v["running-grid"];
+    assert.ok(grid.indexOf("PONS") < grid.indexOf("&lt;img") && grid.indexOf("&lt;img") < grid.indexOf("NVDA"), "newest first");
+    assert.ok(!/<img/i.test(grid), "names are escaped");
+    assert.ok(grid.includes("Read the same way again 2 times · last 27 Nov, 08:05 UTC"));
+    assert.ok(values(Object.assign({}, data, { running: [] }), NOW)["running-grid"].includes("No buy or sell call is running"));
+    assert.ok(!("running-grid" in values(data, NOW)), "an answer without running leaves the page text in place");
+    const many = Array.from({ length: 9 }, (_, i) => call({ id: "R" + i, sym: "T" + i, at: slot - i * H }));
+    const m = values(Object.assign({}, data, { running: many }), NOW);
+    assert.strictEqual((m["running-grid"].match(/class="call c-card"/g) || []).length, 6, "the newest six in the HTML");
+    assert.ok(m["running-count"].startsWith("9 running"), "the count is the full number");
+  },
+  "batches count the readings that matched a running call"() {
+    const batches = [{ slot, at: slot + 5 * 60e3, calls: 10, BUY: 0, SELL: 0, WAIT: 10, AVOID: 0, seen: 4 }, { slot: slot - 4 * H, missed: true, calls: 0 }];
+    const v = values(Object.assign({}, data, { batches }), NOW);
+    assert.ok(v["status-rows"].includes('<td class="r s-against">10</td><td class="r">0</td><td class="r">4</td></tr>'));
+    assert.ok(v["status-rows"].includes('<td colspan="6" class="s-invalidated">Missed'));
+    assert.ok(v.batches.includes("· 4 running calls read again"));
+    assert.ok(!values(data, NOW).batches.includes("read again"), "no note when nothing was read again");
   }
 };
 

@@ -94,6 +94,11 @@
     st.appendChild(el('span', 'mono muted', ago(c.at, now)));
     st.appendChild(el('span', 'mono s-' + c.status, (STATUS_TEXT[c.status] || c.status) + (c.final && c.status !== 'invalidated' ? ' · closed' : '')));
     a.appendChild(st);
+    // a running call Oxva read the same way again in later batches (seen: those slots, seenAt: the last reading)
+    if (c.seen && c.seen.length && c.seenAt) {
+      var n = c.seen.length;
+      a.appendChild(el('p', 'c-seen mono', 'Read the same way again ' + (n === 1 ? 'once' : n + ' times') + ' · last ' + ago(c.seenAt, now)));
+    }
     var lv = el('div', 'c-levels');
     var e1 = el('div'); e1.appendChild(el('span', '', 'Entry ')); e1.appendChild(document.createTextNode(price(c.entry[0]) + '–' + price(c.entry[1]).replace('$', ''))); lv.appendChild(e1);
     var e2 = el('div'); e2.appendChild(el('span', '', 'Invalid ')); e2.appendChild(document.createTextNode(c.invalidation != null ? price(c.invalidation) : '—')); lv.appendChild(e2);

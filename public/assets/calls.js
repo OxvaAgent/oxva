@@ -64,9 +64,35 @@
       });
   }
 
+  // every BUY/SELL still being graded, however old: the newest 120 calls in the batch list can be all waits
+  function renderRunning(d) {
+    if (!Array.isArray(d.running)) return; // an older API answer: keep what the page came with
+    var grid = $('running-grid'); grid.textContent = '';
+    var now = Date.now();
+    var list = d.running.slice().sort(function (a, b) { return b.at - a.at; });
+    $('running-count').textContent = list.length ? list.length + ' running · graded for up to ' + ((d.rules && d.rules.gradeHours) || 72) + ' h' : '';
+    if (!list.length) { grid.appendChild(U.el('p', 'notice empty', 'No buy or sell call is running right now.')); return; }
+    // the newest few first; the rest behind one button, so a long list does not push the batches far down
+    var SHOWN = 6;
+    list.slice(0, SHOWN).forEach(function (c) { grid.appendChild(U.callCard(c, now)); });
+    var more = $('running-more'); if (more) more.remove();
+    if (list.length > SHOWN) {
+      more = U.el('button', 'chip running-more', 'Show all ' + list.length + ' running calls');
+      more.id = 'running-more'; more.type = 'button';
+      more.addEventListener('click', function () {
+        list.slice(SHOWN).forEach(function (c) { grid.appendChild(U.callCard(c, now)); });
+        more.remove();
+      });
+      grid.parentNode.appendChild(more);
+    }
+  }
+
   function renderBatches() {
     var box = $('batches'); box.textContent = '';
     var now = Date.now();
+    // readings per slot that matched a running call (no new call was made for them)
+    var seenBy = {};
+    (data.batches || []).forEach(function (b) { seenBy[b.slot] = b.seen || 0; });
     var list = data.calls.filter(function (c) { return (fAction === 'all' || c.action === fAction) && (fStatus === 'all' || c.status === fStatus); });
     if (!list.length) { box.appendChild(U.el('p', 'notice empty', data.calls.length ? 'No calls match these filters.' : 'The first batch of calls is being made. Check back in a minute.')); return; }
     var groups = {};
@@ -77,7 +103,8 @@
       var head = U.el('div', 'batch-head mono');
       var when = new Date(Number(slot));
       head.appendChild(U.el('b', '', when.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }) + ', ' + when.toISOString().slice(11, 16) + ' UTC'));
-      head.appendChild(U.el('span', '', calls.length + ' call' + (calls.length === 1 ? '' : 's') + ' · ' + U.ago(Number(slot), now)));
+      var again = seenBy[slot] ? ' · ' + seenBy[slot] + ' running call' + (seenBy[slot] === 1 ? '' : 's') + ' read again' : '';
+      head.appendChild(U.el('span', '', calls.length + ' call' + (calls.length === 1 ? '' : 's') + again + ' · ' + U.ago(Number(slot), now)));
       sec.appendChild(head);
       var grid = U.el('div', 'calls-grid');
       calls.sort(function (a, b) { return a.sym.localeCompare(b.sym); }).forEach(function (c) { grid.appendChild(U.callCard(c, now)); });
@@ -102,9 +129,10 @@
     box.appendChild(U.el('p', 'notice err', 'Calls could not be loaded right now. Try again in a minute.'));
   }
   if (ARCHIVE) {
+    $('running').hidden = true; // the archive view is about one month; running calls are on the live page
     U.getCalls().then(renderRecord, function () { /* the record is optional here */ });
     showArchive().catch(failed);
   } else {
-    U.getCalls().then(function (d) { data = d; renderRecord(d); renderBatches(); }).catch(failed);
+    U.getCalls().then(function (d) { data = d; renderRecord(d); renderRunning(d); renderBatches(); }).catch(failed);
   }
 })();
